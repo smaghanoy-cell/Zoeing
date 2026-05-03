@@ -3,20 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SewTruly | Custom Sewing Pattern Generator</title>
-
+  <title>SewTruly Sewing Pattern Generator</title>
   <style>
     :root {
       --bg: #fff8f3;
-      --card: #ffffff;
-      --text: #2d2523;
-      --muted: #7c6d68;
-      --accent: #b06a5b;
-      --accent-dark: #7e4037;
-      --line: #2d2523;
-      --soft: #f2dfd8;
-      --shadow: 0 18px 45px rgba(67, 42, 35, 0.12);
-      --radius: 24px;
+      --panel: #ffffff;
+      --panel-2: #fff1e8;
+      --text: #2b2420;
+      --muted: #766b64;
+      --primary: #c8785a;
+      --primary-dark: #9f5138;
+      --accent: #5f8f8b;
+      --border: #ead7cb;
+      --line: #7b4d3f;
+      --dash: #b9826f;
+      --paper: #fffdf9;
+      --shadow: 0 18px 40px rgba(88, 55, 40, 0.12);
+      --radius: 22px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1f1b18;
+      --panel: #2b2521;
+      --panel-2: #3a302a;
+      --text: #fff7f0;
+      --muted: #d4c4b8;
+      --primary: #e09778;
+      --primary-dark: #f4b195;
+      --accent: #8bc5bf;
+      --border: #554238;
+      --line: #f3c0aa;
+      --dash: #d8896b;
+      --paper: #2f2925;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
     }
 
     * {
@@ -25,289 +44,320 @@
 
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, #f5ded4, transparent 35%),
-        linear-gradient(135deg, #fff8f3, #f9ebe5);
+        radial-gradient(circle at top left, rgba(200, 120, 90, 0.22), transparent 28rem),
+        radial-gradient(circle at bottom right, rgba(95, 143, 139, 0.18), transparent 26rem),
+        var(--bg);
       color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app {
+      width: min(1500px, 96vw);
+      margin: 0 auto;
+      padding: 28px 0 60px;
     }
 
     header {
-      padding: 48px 20px 28px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
     }
 
     .brand {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: #ffffffaa;
-      border: 1px solid #edd4cb;
-      font-weight: 700;
-      color: var(--accent-dark);
-      margin-bottom: 18px;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, var(--primary), var(--accent));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 30px;
+      box-shadow: var(--shadow);
     }
 
     h1 {
-      font-size: clamp(2.2rem, 5vw, 4.4rem);
       margin: 0;
+      font-size: clamp(1.7rem, 4vw, 3rem);
       letter-spacing: -0.05em;
       line-height: 1;
     }
 
     .subtitle {
-      max-width: 820px;
-      margin: 18px auto 0;
+      margin: 8px 0 0;
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.7;
+      font-size: 0.98rem;
     }
 
-    .container {
-      width: min(1280px, 94%);
-      margin: 0 auto 60px;
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 12px 16px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-weight: 700;
+    }
+
+    .layout {
       display: grid;
-      grid-template-columns: 430px 1fr;
-      gap: 24px;
+      grid-template-columns: 390px 1fr;
+      gap: 22px;
       align-items: start;
     }
 
-    .panel {
-      background: var(--card);
+    .card {
+      background: rgba(255, 255, 255, 0.78);
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      border: 1px solid #f0d8cf;
       overflow: hidden;
     }
 
-    .panel-header {
-      padding: 22px 24px;
-      border-bottom: 1px solid #f0d8cf;
-      background: linear-gradient(135deg, #fff, #fff3ee);
+    .card-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel-2);
     }
 
-    .panel-header h2 {
+    .card-header h2 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.12rem;
     }
 
-    .panel-header p {
-      margin: 8px 0 0;
+    .card-header p {
+      margin: 7px 0 0;
       color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.5;
+      font-size: 0.9rem;
     }
 
-    form {
-      padding: 22px;
+    .controls {
+      padding: 20px;
       display: grid;
-      gap: 16px;
-    }
-
-    .field {
-      display: grid;
-      gap: 7px;
+      gap: 14px;
     }
 
     label {
-      font-weight: 700;
-      font-size: 0.86rem;
+      display: grid;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    input,
-    select {
+    select,
+    input {
       width: 100%;
-      padding: 13px 14px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
       border-radius: 14px;
-      border: 1px solid #dfc4ba;
+      padding: 12px 13px;
       font-size: 0.95rem;
       outline: none;
-      background: #fff;
-      color: var(--text);
     }
 
-    input:focus,
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(176, 106, 91, 0.13);
+    select:focus,
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent);
     }
 
-    optgroup {
-      color: var(--accent-dark);
-      font-weight: 800;
-    }
-
-    .two-col {
+    .two {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .actions {
+    .three {
       display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
     button {
       border: 0;
-      padding: 14px 18px;
-      border-radius: 16px;
-      font-weight: 800;
+      border-radius: 15px;
+      padding: 13px 12px;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-weight: 900;
+      font-size: 0.94rem;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
     }
 
     .primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: #fff;
-      box-shadow: 0 12px 28px rgba(126, 64, 55, 0.25);
+      grid-column: span 2;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     }
 
     .secondary {
-      background: #f6e4dc;
-      color: var(--accent-dark);
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
     }
 
-    .ghost {
-      background: transparent;
-      color: var(--accent-dark);
-      border: 1px solid #dfc4ba;
-    }
-
-    .preview {
-      padding: 22px;
+    .preview-wrap {
+      padding: 18px;
     }
 
     .toolbar {
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 0 0 14px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
+    }
+
+    .badge {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-weight: 800;
+      font-size: 0.85rem;
     }
 
     .pattern-stage {
       background:
-        linear-gradient(#f8e8e1 1px, transparent 1px),
-        linear-gradient(90deg, #f8e8e1 1px, transparent 1px);
-      background-size: 24px 24px;
+        linear-gradient(90deg, color-mix(in srgb, var(--border) 50%, transparent) 1px, transparent 1px),
+        linear-gradient(color-mix(in srgb, var(--border) 50%, transparent) 1px, transparent 1px),
+        var(--paper);
+      background-size: 26px 26px;
+      border: 1px solid var(--border);
       border-radius: 20px;
-      border: 1px dashed #d8b8ae;
-      padding: 18px;
-      overflow: auto;
-      min-height: 650px;
+      overflow: hidden;
+      min-height: 640px;
+      position: relative;
     }
 
     svg {
-      background: #ffffff;
-      border-radius: 14px;
-      min-width: 820px;
-      box-shadow: inset 0 0 0 1px #efd6cd;
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .pattern-line {
-      fill: rgba(176, 106, 91, 0.04);
+      fill: rgba(200, 120, 90, 0.08);
       stroke: var(--line);
-      stroke-width: 2.2;
+      stroke-width: 2.5;
     }
 
-    .seam-line {
+    .pattern-line.soft {
+      fill: rgba(95, 143, 139, 0.09);
+    }
+
+    .seam {
       fill: none;
-      stroke: var(--accent);
-      stroke-width: 1.4;
+      stroke: var(--dash);
+      stroke-width: 1.7;
       stroke-dasharray: 8 7;
     }
 
-    .guide-line {
-      stroke: #8f817b;
-      stroke-width: 1.1;
-      stroke-dasharray: 5 6;
+    .guide {
+      stroke: var(--accent);
+      stroke-width: 1.7;
+      stroke-dasharray: 4 6;
+      fill: none;
+    }
+
+    .grain {
+      stroke: var(--accent);
+      stroke-width: 2.2;
+      marker-end: url(#arrow);
+      marker-start: url(#arrowStart);
     }
 
     .notch {
-      fill: var(--accent-dark);
+      fill: var(--primary);
+      stroke: none;
     }
 
-    .svg-label {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      fill: #2d2523;
-      font-weight: 700;
+    .label {
+      fill: var(--text);
+      font-weight: 900;
+      font-size: 15px;
     }
 
     .small-label {
-      font-size: 11px;
-      fill: #7c6d68;
-      font-weight: 600;
+      fill: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
     }
 
-    .summary {
-      margin-top: 18px;
+    .measure {
+      fill: var(--accent);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .instructions {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .summary-card {
-      background: #fff6f1;
-      border: 1px solid #efd6cd;
-      padding: 14px;
-      border-radius: 18px;
-    }
-
-    .summary-card strong {
-      display: block;
-      font-size: 1.05rem;
-      color: var(--accent-dark);
-      line-height: 1.25;
-    }
-
-    .summary-card span {
-      color: var(--muted);
-      font-size: 0.82rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding-top: 14px;
     }
 
     .note {
-      margin-top: 16px;
-      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 18px;
-      background: #fff6f1;
-      border: 1px solid #efd6cd;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.9rem;
-    }
-
-    .garment-info {
-      margin-top: 16px;
       padding: 16px;
-      border-radius: 18px;
-      background: #ffffff;
-      border: 1px solid #efd6cd;
-      display: grid;
-      gap: 8px;
     }
 
-    .garment-info h3 {
-      margin: 0;
-      color: var(--accent-dark);
+    .note h3 {
+      margin: 0 0 10px;
       font-size: 1rem;
     }
 
-    .garment-info p {
+    .note ul,
+    .note ol {
       margin: 0;
+      padding-left: 18px;
       color: var(--muted);
       line-height: 1.55;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
     }
 
-    footer {
-      text-align: center;
+    .category-description {
       color: var(--muted);
-      padding: 30px 20px 50px;
-      font-size: 0.9rem;
+      margin: 0;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .mobile-help {
+      display: none;
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 0.88rem;
     }
 
     @media print {
@@ -316,1482 +366,1209 @@
       }
 
       header,
-      .form-panel,
+      .controls-card,
       .toolbar,
-      .summary,
-      .note,
-      .garment-info,
-      footer {
+      .instructions {
         display: none !important;
       }
 
-      .container {
+      .app {
         width: 100%;
+        padding: 0;
+      }
+
+      .layout {
         display: block;
-        margin: 0;
       }
 
-      .panel {
+      .card {
+        border: 0;
         box-shadow: none;
-        border: none;
-      }
-
-      .panel-header {
-        display: none;
       }
 
       .pattern-stage {
-        border: none;
-        padding: 0;
-        background: white;
         min-height: auto;
-      }
-
-      svg {
-        box-shadow: none;
-        border-radius: 0;
-        width: 100%;
-        min-width: 0;
       }
     }
 
     @media (max-width: 980px) {
-      .container {
+      .layout {
         grid-template-columns: 1fr;
       }
 
-      .summary {
-        grid-template-columns: repeat(2, 1fr);
+      .controls-card {
+        position: static;
       }
 
-      .pattern-stage {
-        min-height: 480px;
+      .instructions {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 620px) {
+      .app {
+        width: min(100% - 24px, 1500px);
+        padding-top: 18px;
+      }
+
       header {
-        padding-top: 32px;
+        align-items: flex-start;
       }
 
-      .two-col {
+      .logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      .theme-toggle {
+        padding: 10px 12px;
+      }
+
+      .two,
+      .three {
         grid-template-columns: 1fr;
       }
 
-      .summary {
+      .buttons {
         grid-template-columns: 1fr;
       }
 
-      .toolbar button {
-        width: 100%;
+      .primary {
+        grid-column: span 1;
       }
 
-      .panel-header,
-      form,
-      .preview {
-        padding: 18px;
+      .pattern-stage {
+        overflow-x: auto;
+        min-height: 520px;
+      }
+
+      svg {
+        min-width: 760px;
+      }
+
+      .mobile-help {
+        display: block;
       }
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="brand">✂️ SewTruly Pattern Studio</div>
-    <h1>Custom Sewing Pattern Generator</h1>
-    <p class="subtitle">
-      Generate made-to-measure starter sewing patterns for women, men, children, and newborn garments using body measurements,
-      garment category, fit, seam allowance, and print-ready layout.
-    </p>
-  </header>
-
-  <main class="container">
-    <section class="panel form-panel">
-      <div class="panel-header">
-        <h2>Measurement & Style Input</h2>
-        <p>Select a garment category and enter measurements in centimeters. The pattern preview will update automatically.</p>
-      </div>
-
-      <form id="patternForm">
-        <div class="field">
-          <label for="wearerCategory">Main Category</label>
-          <select id="wearerCategory">
-            <option value="women">Women</option>
-            <option value="men">Men</option>
-            <option value="children">Children</option>
-            <option value="newborn">Newborn / Infant</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="garmentGroup">Use / Occasion</label>
-          <select id="garmentGroup"></select>
-        </div>
-
-        <div class="field">
-          <label for="garment">Garment Type</label>
-          <select id="garment"></select>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="bust">Bust / Chest</label>
-            <input id="bust" type="number" value="88" min="20" max="190" />
-          </div>
-
-          <div class="field">
-            <label for="waist">Waist</label>
-            <input id="waist" type="number" value="70" min="20" max="170" />
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="hips">Hips / Seat</label>
-            <input id="hips" type="number" value="96" min="20" max="200" />
-          </div>
-
-          <div class="field">
-            <label for="height">Height</label>
-            <input id="height" type="number" value="162" min="45" max="230" />
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="shoulder">Shoulder Width</label>
-            <input id="shoulder" type="number" value="38" min="10" max="75" />
-          </div>
-
-          <div class="field">
-            <label for="armhole">Armhole Depth</label>
-            <input id="armhole" type="number" value="20" min="6" max="45" />
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="length">Garment Length</label>
-            <input id="length" type="number" value="95" min="15" max="190" />
-          </div>
-
-          <div class="field">
-            <label for="sleeve">Sleeve Length</label>
-            <input id="sleeve" type="number" value="24" min="0" max="90" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="neckline">Neckline / Collar Style</label>
-          <select id="neckline">
-            <option value="round">Round Neckline</option>
-            <option value="v">V-Neckline</option>
-            <option value="square">Square Neckline</option>
-            <option value="collar">Shirt Collar / Barong Collar</option>
-            <option value="mandarin">Mandarin Collar</option>
-          </select>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="fit">Fit / Ease</label>
-            <select id="fit">
-              <option value="close">Close Fit</option>
-              <option value="regular" selected>Regular Fit</option>
-              <option value="relaxed">Relaxed Fit</option>
-              <option value="loose">Loose / Comfort Fit</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="seam">Seam Allowance</label>
-            <select id="seam">
-              <option value="1">1 cm</option>
-              <option value="1.5" selected>1.5 cm</option>
-              <option value="2">2 cm</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="paper">Output Layout</label>
-          <select id="paper">
-            <option value="a4">A4 Home Printer</option>
-            <option value="letter">US Letter</option>
-            <option value="plotter">Plotter / Large Format</option>
-          </select>
-        </div>
-
-        <div class="actions">
-          <button class="primary" type="button" onclick="generatePattern()">Generate Pattern</button>
-          <button class="secondary" type="button" onclick="printPattern()">Print / Save as PDF</button>
-          <button class="ghost" type="button" onclick="resetForm()">Reset Sample</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <h2>Generated Pattern Preview</h2>
-        <p>Includes seam allowance, grainline, notches, and measurement-based drafting notes.</p>
-      </div>
-
-      <div class="preview">
-        <div class="toolbar">
-          <button class="secondary" onclick="downloadSVG()">Download SVG</button>
-          <button class="secondary" onclick="downloadDXF()">Download CAD DXF</button>
-          <button class="ghost" onclick="toggleGrid()">Toggle Grid</button>
-        </div>
-
-        <div class="pattern-stage" id="patternStage">
-          <svg id="patternSvg" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg"></svg>
-        </div>
-
-        <div class="summary">
-          <div class="summary-card">
-            <strong id="patternName">Dress</strong>
-            <span>Selected garment</span>
-          </div>
-          <div class="summary-card">
-            <strong id="categoryValue">Women</strong>
-            <span>Main category</span>
-          </div>
-          <div class="summary-card">
-            <strong id="easeValue">6 cm</strong>
-            <span>Total design ease</span>
-          </div>
-          <div class="summary-card">
-            <strong id="seamValue">1.5 cm</strong>
-            <span>Seam allowance</span>
-          </div>
-        </div>
-
-        <div class="garment-info">
-          <h3 id="garmentInfoTitle">Garment Notes</h3>
-          <p id="garmentInfoDescription">Select a garment to view its purpose and drafting direction.</p>
-        </div>
-
-        <div class="note">
-          <strong>Important:</strong> This is a simplified educational prototype for digital pattern drafting.
-          For actual production, test the pattern through a toile or muslin fitting before cutting final fabric.
+  <div class="app" data-theme="light">
+    <header>
+      <div class="brand">
+        <div class="logo">✂</div>
+        <div>
+          <h1>SewTruly Pattern Generator</h1>
+          <p class="subtitle">Choose a garment, enter measurements, and generate category-based sewing pattern pieces.</p>
         </div>
       </div>
-    </section>
-  </main>
+      <button class="theme-toggle" id="themeBtn" type="button">🌙 Night Mode</button>
+    </header>
 
-  <footer>
-    SewTruly prototype for GitHub Pages · Made-to-measure sewing pattern generator
-  </footer>
+    <main class="layout">
+      <section class="card controls-card">
+        <div class="card-header">
+          <h2>Pattern Details</h2>
+          <p>Select the group, exact clothing type, size, fit, and measurements.</p>
+        </div>
+
+        <div class="controls">
+          <label>
+            Category Group
+            <select id="groupSelect"></select>
+          </label>
+
+          <label>
+            Clothing Type
+            <select id="typeSelect"></select>
+          </label>
+
+          <p class="category-description" id="typeDescription"></p>
+
+          <div class="two">
+            <label>
+              Size
+              <select id="sizeSelect">
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M" selected>M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </label>
+
+            <label>
+              Unit
+              <select id="unitSelect">
+                <option value="cm" selected>Centimeters</option>
+                <option value="in">Inches</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="two">
+            <label>
+              Fit Preference
+              <select id="fitSelect">
+                <option value="slim">Slim Fit</option>
+                <option value="regular" selected>Regular Fit</option>
+                <option value="loose">Loose Fit</option>
+              </select>
+            </label>
+
+            <label>
+              Seam Allowance
+              <select id="seamSelect">
+                <option value="0.5">0.5 inch</option>
+                <option value="1" selected>1 cm</option>
+                <option value="1.5">1.5 cm</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="three">
+            <label>Bust / Chest <input id="bust" type="number" min="10" value="92" /></label>
+            <label>Waist <input id="waist" type="number" min="10" value="74" /></label>
+            <label>Hip <input id="hip" type="number" min="10" value="98" /></label>
+          </div>
+
+          <div class="three">
+            <label>Shoulder <input id="shoulder" type="number" min="5" value="39" /></label>
+            <label>Armhole <input id="armhole" type="number" min="5" value="42" /></label>
+            <label>Neck <input id="neck" type="number" min="5" value="36" /></label>
+          </div>
+
+          <div class="three">
+            <label>Sleeve Length <input id="sleeve" type="number" min="0" value="22" /></label>
+            <label>Garment Length <input id="length" type="number" min="10" value="105" /></label>
+            <label>Inseam <input id="inseam" type="number" min="0" value="72" /></label>
+          </div>
+
+          <div class="buttons">
+            <button class="primary" id="generateBtn" type="button">Generate Pattern</button>
+            <button class="secondary" id="resetBtn" type="button">Reset</button>
+            <button class="secondary" id="pngBtn" type="button">Download PNG</button>
+            <button class="secondary" id="printBtn" type="button">Print / Save PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Pattern Preview</h2>
+          <p>Solid lines are cutting lines. Dashed lines are seam allowance and construction guides.</p>
+          <p class="mobile-help">Mobile: swipe left/right inside the preview to see the full pattern.</p>
+        </div>
+
+        <div class="preview-wrap">
+          <div class="toolbar">
+            <span class="badge" id="patternBadge">Women • Casual Dress</span>
+            <span class="badge" id="measurementBadge">Regular fit • 1 cm seam</span>
+          </div>
+
+          <div class="pattern-stage" id="patternStage">
+            <svg id="patternSvg" viewBox="0 0 1200 760" role="img" aria-label="Generated sewing pattern"></svg>
+          </div>
+
+          <div class="instructions">
+            <div class="note">
+              <h3>Cutting Instructions</h3>
+              <ul id="cutList"></ul>
+            </div>
+
+            <div class="note">
+              <h3>Sewing Notes</h3>
+              <ol id="sewList"></ol>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script>
-    let gridVisible = true;
-
-    const GARMENT_LIBRARY = {
-      women: {
-        label: "Women",
-        groups: {
-          everyday: {
-            label: "Everyday / Casual Wear",
-            items: [
-              ["casual_dress", "Casual Dress", "Simple everyday dress for errands, home, or daily wear."],
-              ["sundress", "Sundress", "Light dress for warm weather."],
-              ["shirt_dress", "Shirt Dress", "Dress styled like a long button-down shirt."],
-              ["tshirt_dress", "T-Shirt Dress", "Comfortable dress based on a T-shirt silhouette."],
-              ["maxi_dress", "Maxi Dress", "Long flowy dress, usually ankle-length."],
-              ["midi_dress", "Midi Dress", "Dress length between knee and ankle."],
-              ["mini_dress", "Mini Dress", "Short dress above the knee."],
-              ["wrap_dress", "Wrap Dress", "Dress that wraps around the body and ties at the waist."],
-              ["tunic_dress", "Tunic Dress", "Loose dress or long top worn with leggings or pants."],
-              ["kaftan_dress", "Kaftan Dress", "Loose, flowy garment for comfort or resort wear."],
-              ["denim_dress", "Denim Dress", "Casual dress made from denim fabric."],
-              ["cotton_dress", "Cotton Dress", "Soft daily dress, usually breathable and comfortable."],
-              ["jumper_dress", "Jumper Dress", "Sleeveless dress worn over a blouse or shirt."],
-              ["apron_dress", "Apron Dress", "Sleeveless dress inspired by apron construction."],
-              ["house_dress", "House Dress", "Loose and comfortable dress for home wear."],
-              ["lounge_dress", "Lounge Dress", "Relaxed dress for home or casual settings."]
-            ]
-          },
-          office: {
-            label: "Office / Semi-Formal Wear",
-            items: [
-              ["formal_dress", "Formal Dress", "Used for office events, meetings, or formal gatherings."],
-              ["sheath_dress", "Sheath Dress", "Straight fitted dress commonly used for office wear."],
-              ["pencil_dress", "Pencil Dress", "Slim-fitting dress with a narrow skirt."],
-              ["aline_dress", "A-Line Dress", "Fitted at the top and flares out toward the hem."],
-              ["peplum_dress", "Peplum Dress", "Dress with a short flared fabric layer at the waist."],
-              ["shift_dress", "Shift Dress", "Simple straight dress that hangs from the shoulders."],
-              ["blazer_dress", "Blazer Dress", "Dress designed like a tailored blazer."],
-              ["coat_dress", "Coat Dress", "Dress styled like a structured coat."],
-              ["office_blouse", "Office Blouse", "Upper garment for professional or semi-formal use."],
-              ["button_blouse", "Button-Down Blouse", "Blouse with front buttons."],
-              ["pencil_skirt", "Pencil Skirt", "Straight narrow skirt used for office attire."],
-              ["aline_skirt", "A-Line Skirt", "Skirt fitted at waist and flaring toward hem."],
-              ["culottes", "Culottes", "Wide-leg pants that look like a skirt."],
-              ["tailored_trousers", "Tailored Trousers", "Formal or semi-formal women’s pants."],
-              ["womens_blazer", "Women’s Blazer", "Structured jacket for office or formal wear."]
-            ]
-          },
-          formal: {
-            label: "Party / Evening / Formal Wear",
-            items: [
-              ["cocktail_dress", "Cocktail Dress", "Semi-formal dress for parties or evening events."],
-              ["evening_gown", "Evening Gown", "Long elegant dress for galas, weddings, or formal programs."],
-              ["ball_gown", "Ball Gown", "Full-skirted formal gown for grand events."],
-              ["mermaid_gown", "Mermaid Gown", "Fitted gown that flares near the knees."],
-              ["trumpet_gown", "Trumpet Gown", "Fitted through the body and flares around mid-thigh."],
-              ["empire_dress", "Empire Waist Dress", "Dress with waistline placed below the bust."],
-              ["halter_dress", "Halter Dress", "Dress with straps around the neck."],
-              ["offshoulder_dress", "Off-Shoulder Dress", "Dress exposing the shoulders."],
-              ["oneshoulder_dress", "One-Shoulder Dress", "Dress with one shoulder strap or sleeve."],
-              ["highlow_dress", "High-Low Dress", "Dress with shorter front and longer back hem."],
-              ["bodycon_dress", "Bodycon Dress", "Tight-fitting dress that follows the body shape."],
-              ["slip_dress", "Slip Dress", "Lightweight dress with thin straps."],
-              ["sequin_dress", "Sequin Dress", "Decorative party dress with sequins."],
-              ["bridesmaid_dress", "Bridesmaid Dress", "Dress worn by bridesmaids."],
-              ["wedding_dress", "Wedding Dress", "Bridal gown for weddings."]
-            ]
-          },
-          traditional: {
-            label: "Traditional / Cultural Wear",
-            items: [
-              ["filipiniana_dress", "Filipiniana Dress", "Traditional Filipino formal wear."],
-              ["terno", "Terno", "Filipiniana dress with butterfly sleeves."],
-              ["balintawak", "Balintawak Dress", "Traditional Filipino dress with tapis and butterfly sleeves."],
-              ["maria_clara", "Maria Clara Dress", "Traditional Filipino formal dress with layered components."],
-              ["kimona", "Kimona", "Traditional blouse often paired with a skirt."],
-              ["saya", "Saya", "Traditional Filipino skirt."],
-              ["barot_saya", "Baro’t Saya", "Traditional Filipino blouse and skirt ensemble."],
-              ["cheongsam", "Cheongsam / Qipao", "Fitted Chinese traditional dress."],
-              ["hanbok_dress", "Hanbok Dress", "Korean-inspired traditional dress."],
-              ["kimono_robe", "Kimono-Inspired Robe", "Robe based on Japanese kimono structure."],
-              ["sari_blouse", "Sari Blouse", "Fitted blouse worn with sari."],
-              ["kebaya", "Kebaya", "Traditional blouse-dress worn in Southeast Asia."]
-            ]
-          },
-          functional: {
-            label: "Special Use / Functional Wear",
-            items: [
-              ["maternity_dress", "Maternity Dress", "Comfortable dress for pregnant women."],
-              ["nursing_dress", "Nursing Dress", "Dress designed for breastfeeding mothers."],
-              ["nursing_blouse", "Nursing Blouse", "Top with breastfeeding access."],
-              ["maternity_pants", "Maternity Pants", "Adjustable pants for pregnancy."],
-              ["scrub_suit", "Scrub Suit", "Medical uniform top and pants."],
-              ["lab_gown", "Lab Gown", "Protective garment for laboratory or medical use."],
-              ["apron", "Apron", "Protective garment for kitchen, workshop, or craft use."],
-              ["chef_jacket", "Chef Jacket", "Double-breasted kitchen uniform."],
-              ["uniform_dress", "Uniform Dress", "Dress used as institutional or office uniform."],
-              ["choir_gown", "Choir Gown", "Long robe used for choir or ceremonial performances."],
-              ["graduation_gown", "Graduation Gown", "Academic gown for graduation ceremonies."],
-              ["cape", "Cape", "Sleeveless outer garment worn over shoulders."],
-              ["cloak", "Cloak", "Long loose outer garment."]
-            ]
-          }
-        }
-      },
-      men: {
-        label: "Men",
-        groups: {
-          everyday: {
-            label: "Everyday / Casual Wear",
-            items: [
-              ["tshirt", "T-Shirt", "Basic casual upper garment."],
-              ["polo_shirt", "Polo Shirt", "Collared casual shirt."],
-              ["short_sleeve_polo", "Short-Sleeve Polo", "Casual or office-casual wear."],
-              ["casual_buttondown", "Casual Button-Down Shirt", "Relaxed shirt with front buttons."],
-              ["henley", "Henley Shirt", "Casual shirt with short button placket."],
-              ["tank_top", "Tank Top", "Sleeveless casual top."],
-              ["hoodie", "Hoodie", "Casual hooded sweatshirt."],
-              ["sweatshirt", "Sweatshirt", "Comfortable casual pullover."],
-              ["jogger_pants", "Jogger Pants", "Casual pants with elastic cuffs."],
-              ["shorts", "Shorts", "Casual lower garment above the knee."],
-              ["cargo_shorts", "Cargo Shorts", "Shorts with utility pockets."],
-              ["cargo_pants", "Cargo Pants", "Casual utility pants with side pockets."],
-              ["jeans", "Denim Jeans", "Casual pants made from denim."],
-              ["chinos", "Chinos", "Semi-formal or casual pants."],
-              ["lounge_pants", "Lounge Pants", "Comfortable pants for home wear."],
-              ["pajama_set", "Pajama Set", "Sleepwear top and bottom."]
-            ]
-          },
-          office: {
-            label: "Office / Semi-Formal Wear",
-            items: [
-              ["long_sleeve_polo", "Long-Sleeve Polo", "Office or semi-formal wear."],
-              ["dress_shirt", "Dress Shirt", "Formal shirt worn with slacks or suit."],
-              ["office_shirt", "Office Shirt", "Standard work shirt."],
-              ["slacks", "Slacks", "Formal trousers."],
-              ["office_chinos", "Chinos", "Semi-formal or casual pants."],
-              ["blazer", "Blazer", "Jacket used for smart casual or formal events."],
-              ["sports_coat", "Sports Coat", "Semi-formal jacket less structured than a suit jacket."],
-              ["waistcoat", "Vest / Waistcoat", "Formal upper garment worn with suit."],
-              ["cardigan", "Cardigan", "Knitted or sewn front-opening outerwear."],
-              ["mens_jacket", "Men’s Jacket", "General outerwear pattern."],
-              ["work_uniform_shirt", "Work Uniform Shirt", "Shirt used for office or service uniform."],
-              ["utility_vest", "Utility Vest", "Vest with functional pockets."]
-            ]
-          },
-          formal: {
-            label: "Formal / Event Wear",
-            items: [
-              ["barong_tagalog", "Barong Tagalog", "Traditional Filipino formal wear."],
-              ["polo_barong", "Polo Barong", "Semi-formal Filipino attire."],
-              ["suit", "Suit", "Formal jacket and trousers set."],
-              ["tuxedo", "Tuxedo", "Very formal evening attire."],
-              ["dinner_jacket", "Dinner Jacket", "Formal jacket for evening events."],
-              ["tailcoat", "Tailcoat", "Formal coat with long back tails."],
-              ["formal_vest", "Formal Vest", "Waistcoat used under suit or tuxedo."],
-              ["formal_trousers", "Formal Trousers", "Pants used with suits or tuxedos."],
-              ["mandarin_shirt", "Mandarin Collar Shirt", "Formal shirt with standing collar."],
-              ["necktie", "Necktie", "Formal accessory pattern."],
-              ["bowtie", "Bow Tie", "Formal neck accessory."],
-              ["cummerbund", "Cummerbund", "Waist sash worn with tuxedo."],
-              ["formal_overcoat", "Formal Overcoat", "Long coat worn over formal attire."]
-            ]
-          },
-          traditional: {
-            label: "Traditional / Cultural Wear",
-            items: [
-              ["kurta", "Kurta", "Traditional long tunic in some cultures."],
-              ["robe", "Robe", "Loose garment for home or ceremonial use."],
-              ["clerical_robe", "Clerical Robe", "Formal religious or ceremonial garment."],
-              ["kimono_robe_men", "Kimono Robe", "Robe inspired by Japanese kimono structure."],
-              ["dashiki", "Dashiki", "Loose colorful traditional African shirt."],
-              ["tunic", "Tunic", "Long upper garment worn in different cultures."],
-              ["traditional_vest", "Traditional Vest", "Cultural or ceremonial vest."],
-              ["malong_inspired", "Malong-Inspired Garment", "Wrap-around garment inspired by Mindanao textile tradition."]
-            ]
-          },
-          functional: {
-            label: "Special Use / Functional Wear",
-            items: [
-              ["men_scrub_suit", "Scrub Suit", "Medical uniform top and pants."],
-              ["lab_coat", "Lab Coat", "Protective garment for laboratory or medical work."],
-              ["men_chef_jacket", "Chef Jacket", "Double-breasted kitchen uniform."],
-              ["men_apron", "Apron", "Protective garment for cooking or work."],
-              ["coveralls", "Coveralls", "One-piece work garment."],
-              ["mechanic_uniform", "Mechanic Uniform", "Durable shirt and pants for technical work."],
-              ["security_uniform", "Security Uniform", "Shirt and trousers for security personnel."],
-              ["raincoat", "Raincoat", "Waterproof outerwear."],
-              ["windbreaker", "Windbreaker", "Lightweight protective jacket."],
-              ["work_jacket", "Work Jacket", "Durable jacket for field or manual work."],
-              ["men_graduation_gown", "Graduation Gown", "Academic gown for graduation."],
-              ["choir_robe", "Choir Robe", "Ceremonial robe used in choir or religious events."]
-            ]
-          }
-        }
-      },
-      children: {
-        label: "Children",
-        groups: {
-          everyday: {
-            label: "Everyday / Casual Wear",
-            items: [
-              ["child_casual_dress", "Casual Dress", "Everyday dress for children."],
-              ["child_cotton_dress", "Cotton Dress", "Soft and comfortable daily dress."],
-              ["child_denim_dress", "Denim Dress", "Casual dress made of denim."],
-              ["child_tshirt", "T-Shirt", "Basic children’s top."],
-              ["child_polo", "Polo Shirt", "Collared shirt for casual or school use."],
-              ["child_shorts", "Shorts", "Everyday lower garment."],
-              ["child_pants", "Pants", "Basic children’s trousers."],
-              ["child_joggers", "Jogger Pants", "Comfortable pants with elastic cuffs."],
-              ["child_leggings", "Leggings", "Stretch pants for children."],
-              ["child_jumper_dress", "Jumper Dress", "Sleeveless dress worn over a shirt."],
-              ["child_romper_dress", "Romper Dress", "One-piece outfit with dress-like appearance."],
-              ["child_overalls", "Overalls", "One-piece garment with shoulder straps."],
-              ["playwear_set", "Playwear Set", "Comfortable top and bottom for play."],
-              ["child_hoodie", "Hoodie", "Casual hooded outerwear."],
-              ["child_pajama_set", "Pajama Set", "Sleepwear for children."]
-            ]
-          },
-          school: {
-            label: "School / Uniform Wear",
-            items: [
-              ["school_dress", "School Dress / Uniform", "Dress used as school uniform."],
-              ["school_blouse", "School Blouse", "Blouse used for school uniform."],
-              ["school_polo", "School Polo", "Polo shirt used for school uniform."],
-              ["school_skirt", "School Skirt", "Skirt used for school uniform."],
-              ["school_pants", "School Pants", "Pants used for school uniform."],
-              ["pinafore", "Pinafore Dress", "Sleeveless school dress worn over blouse."],
-              ["pe_shirt", "PE Uniform Shirt", "Shirt used for physical education."],
-              ["pe_shorts", "PE Shorts", "Shorts used for physical education."],
-              ["school_blazer", "School Blazer", "Formal school jacket."],
-              ["vest_uniform", "Vest Uniform", "Sleeveless uniform garment."],
-              ["school_necktie", "Necktie", "School accessory pattern."],
-              ["apron_uniform", "Apron Uniform", "Uniform used in specific school activities."]
-            ]
-          },
-          formal: {
-            label: "Formal / Party Wear",
-            items: [
-              ["party_dress", "Party Dress", "Dress for birthdays or celebrations."],
-              ["flower_girl_dress", "Flower Girl Dress", "Dress worn by young girls in weddings."],
-              ["sunday_dress", "Sunday Dress", "Semi-formal dress for church or family gatherings."],
-              ["princess_dress", "Princess Dress", "Costume-style dress for events or play."],
-              ["tutu_dress", "Tutu Dress", "Dress with tulle skirt, often for parties."],
-              ["child_formal_dress", "Formal Dress", "For ceremonies, recognition, or family events."],
-              ["junior_gown", "Junior Gown", "Formal gown for young girls."],
-              ["boys_formal_shirt", "Boys’ Formal Shirt", "Formal shirt for boys."],
-              ["boys_vest", "Boys’ Vest", "Formal vest for boys."],
-              ["boys_slacks", "Boys’ Slacks", "Formal trousers for boys."],
-              ["boys_suit", "Boys’ Suit", "Formal jacket and pants set."],
-              ["boys_barong", "Boys’ Barong Tagalog", "Filipino formal wear for boys."],
-              ["girls_filipiniana", "Girls’ Filipiniana", "Traditional Filipino dress for girls."],
-              ["costume_dress", "Costume Dress", "For school programs or themed events."]
-            ]
-          },
-          traditional: {
-            label: "Traditional / Cultural Wear",
-            items: [
-              ["child_traditional_dress", "Traditional Dress", "Cultural attire, e.g., Filipiniana for girls."],
-              ["children_barong", "Children’s Barong", "Traditional Filipino formal shirt for boys."],
-              ["children_terno", "Children’s Terno", "Filipiniana dress with butterfly sleeves."],
-              ["children_kimona", "Children’s Kimona", "Traditional blouse for girls."],
-              ["children_saya", "Children’s Saya", "Traditional skirt."],
-              ["cultural_costume", "Cultural Costume", "Outfit for school or cultural programs."],
-              ["festival_costume", "Festival Costume", "Costume used for performances or festivals."],
-              ["dance_costume", "Dance Costume", "Costume used for dance performances."]
-            ]
-          },
-          functional: {
-            label: "Special Use / Functional Wear",
-            items: [
-              ["child_raincoat", "Raincoat", "Waterproof outerwear for children."],
-              ["child_jacket", "Jacket", "Outerwear for cold or windy weather."],
-              ["child_cardigan", "Cardigan", "Light outerwear."],
-              ["child_apron", "Apron", "Protective garment for art, cooking, or school activities."],
-              ["child_lab_coat", "Lab Coat Costume", "School science or costume garment."],
-              ["child_scrub", "Scrub Costume", "Medical-themed children’s costume."],
-              ["swim_coverup", "Swim Cover-Up", "Garment worn over swimwear."],
-              ["child_cape", "Cape", "Costume or outer garment."],
-              ["child_robe", "Robe", "Loose garment for home or costume use."],
-              ["child_choir_robe", "Choir Robe", "Robe used for school or church choir."]
-            ]
-          }
-        }
-      },
-      newborn: {
-        label: "Newborn / Infant",
-        groups: {
-          everyday: {
-            label: "Everyday Baby Wear",
-            items: [
-              ["onesie", "Onesie / Bodysuit", "One-piece baby clothing with snap buttons."],
-              ["sleepsuit", "Sleepsuit", "Full-body outfit for sleeping."],
-              ["baby_romper", "Romper", "One-piece outfit for babies."],
-              ["baby_dress", "Baby Dress", "Small dress for newborn girls."],
-              ["baby_shirt", "Baby Shirt", "Soft shirt for newborns."],
-              ["baby_kimono_top", "Baby Kimono Top", "Side-tie shirt for newborns."],
-              ["infant_gown", "Infant Gown", "Loose baby gown for easy diaper changes."],
-              ["footed_pajamas", "Footed Pajamas", "Pajamas with covered feet."],
-              ["baby_shorts", "Baby Shorts", "Small shorts for infants."],
-              ["baby_pants", "Baby Pants", "Soft pants for babies."],
-              ["baby_leggings", "Leggings", "Stretch bottoms for babies."],
-              ["bloomer_shorts", "Bloomer Shorts", "Loose diaper-cover style shorts."],
-              ["diaper_cover", "Diaper Cover", "Cover worn over diapers."],
-              ["baby_cardigan", "Baby Jacket / Cardigan", "Light outerwear for babies."],
-              ["baby_hoodie", "Baby Hoodie", "Hooded outerwear for babies."]
-            ]
-          },
-          sleepwear: {
-            label: "Sleepwear / Comfort Wear",
-            items: [
-              ["swaddle", "Swaddle Cloth", "Cloth used to wrap newborns."],
-              ["receiving_blanket", "Receiving Blanket", "Blanket used when carrying or receiving the baby."],
-              ["sleep_sack", "Sleep Sack", "Wearable blanket for sleeping."],
-              ["infant_nightgown", "Infant Nightgown", "Loose sleeping gown for diaper changes."],
-              ["footed_sleeper", "Footed Sleeper", "Full-body sleepwear with covered feet."],
-              ["baby_pajama_set", "Baby Pajama Set", "Baby sleepwear top and bottom."],
-              ["baby_robe", "Baby Robe", "Soft robe for after bath."],
-              ["baby_wrap", "Baby Wrap", "Cloth wrap for comfort and carrying."]
-            ]
-          },
-          formal: {
-            label: "Formal / Ceremony Wear",
-            items: [
-              ["christening_gown", "Christening Gown", "Long white gown for baptism or dedication."],
-              ["baptism_romper", "Baptism Romper", "Formal baby romper for baptism."],
-              ["dedication_gown", "Dedication Gown", "Ceremonial baby gown."],
-              ["baby_formal_dress", "Baby Formal Dress", "Formal dress for infants."],
-              ["baby_barong", "Baby Barong", "Filipino formal wear for baby boys."],
-              ["baby_suit", "Baby Suit", "Small formal suit for infants."],
-              ["baby_vest", "Baby Vest", "Formal vest for baby boys."],
-              ["baby_tutu", "Baby Tutu Dress", "Tulle dress for photoshoots or parties."],
-              ["baby_party_dress", "Baby Party Dress", "Dress for birthdays or celebrations."],
-              ["baby_costume", "Baby Costume", "Costume for themed events or photoshoots."]
-            ]
-          },
-          accessories: {
-            label: "Baby Accessories",
-            items: [
-              ["baby_bonnet", "Baby Bonnet", "Soft hat for newborns."],
-              ["mittens", "Mittens", "Hand covers to prevent scratching."],
-              ["booties", "Booties", "Soft baby footwear."],
-              ["bib", "Bib", "Cloth worn during feeding."],
-              ["burp_cloth", "Burp Cloth", "Cloth placed on shoulder during burping."],
-              ["baby_cap", "Baby Cap", "Simple soft head covering."],
-              ["headband", "Headband", "Baby hair accessory."],
-              ["baby_scarf", "Baby Scarf", "Soft neck accessory."],
-              ["apron_bib", "Baby Apron Bib", "Larger bib for feeding."],
-              ["pacifier_clip", "Pacifier Clip Fabric Strap", "Small fabric strap accessory."],
-              ["baby_blanket", "Baby Blanket", "Larger fabric blanket."],
-              ["crib_sheet", "Crib Sheet", "Fitted sheet for baby crib."],
-              ["changing_mat_cover", "Changing Mat Cover", "Fabric cover for changing pad."]
-            ]
-          }
-        }
-      }
+    const GARMENTS = {
+      "Women": [
+        ["Casual Dress", "Simple everyday dress for errands, home, or daily wear"],
+        ["Sundress", "Light dress for warm weather"],
+        ["Shirt Dress", "Dress styled like a long button-down shirt"],
+        ["T-Shirt Dress", "Comfortable dress based on a T-shirt silhouette"],
+        ["Maxi Dress", "Long flowy dress, usually ankle-length"],
+        ["Midi Dress", "Dress length between knee and ankle"],
+        ["Mini Dress", "Short dress above the knee"],
+        ["Wrap Dress", "Dress that wraps around the body and ties at the waist"],
+        ["Tunic Dress", "Loose dress or long top worn with leggings or pants"],
+        ["Kaftan Dress", "Loose, flowy garment for comfort or resort wear"],
+        ["Denim Dress", "Casual dress made from denim fabric"],
+        ["Cotton Dress", "Soft daily dress, usually breathable and comfortable"],
+        ["Jumper Dress", "Sleeveless dress worn over a blouse or shirt"],
+        ["Apron Dress", "Sleeveless dress inspired by apron construction"],
+        ["House Dress", "Loose and comfortable dress for home wear"],
+        ["Lounge Dress", "Relaxed dress for home or casual settings"],
+        ["Formal Dress", "Used for office events, meetings, or formal gatherings"],
+        ["Sheath Dress", "Straight fitted dress commonly used for office wear"],
+        ["Pencil Dress", "Slim-fitting dress with a narrow skirt"],
+        ["A-Line Dress", "Fitted at the top and flares out toward the hem"],
+        ["Peplum Dress", "Dress with a short flared fabric layer at the waist"],
+        ["Shift Dress", "Simple straight dress that hangs from the shoulders"],
+        ["Blazer Dress", "Dress designed like a tailored blazer"],
+        ["Coat Dress", "Dress styled like a structured coat"],
+        ["Office Blouse", "Upper garment for professional or semi-formal use"],
+        ["Button-Down Blouse", "Blouse with front buttons"],
+        ["Pencil Skirt", "Straight narrow skirt used for office attire"],
+        ["A-Line Skirt", "Skirt fitted at waist and flaring toward hem"],
+        ["Culottes", "Wide-leg pants that look like a skirt"],
+        ["Tailored Trousers", "Formal or semi-formal women’s pants"],
+        ["Women’s Blazer", "Structured jacket for office or formal wear"],
+        ["Cocktail Dress", "Semi-formal dress for parties or evening events"],
+        ["Evening Gown", "Long elegant dress for galas, weddings, or formal programs"],
+        ["Ball Gown", "Full-skirted formal gown for grand events"],
+        ["Mermaid Gown", "Fitted gown that flares near the knees"],
+        ["Trumpet Gown", "Fitted through the body and flares around mid-thigh"],
+        ["Empire Waist Dress", "Dress with waistline placed below the bust"],
+        ["Halter Dress", "Dress with straps around the neck"],
+        ["Off-Shoulder Dress", "Dress exposing the shoulders"],
+        ["One-Shoulder Dress", "Dress with one shoulder strap or sleeve"],
+        ["High-Low Dress", "Dress with shorter front and longer back hem"],
+        ["Bodycon Dress", "Tight-fitting dress that follows the body shape"],
+        ["Slip Dress", "Lightweight dress with thin straps"],
+        ["Sequin Dress", "Decorative party dress with sequins"],
+        ["Bridesmaid Dress", "Dress worn by bridesmaids"],
+        ["Wedding Dress", "Bridal gown for weddings"],
+        ["Filipiniana Dress", "Traditional Filipino formal wear"],
+        ["Terno", "Filipiniana dress with butterfly sleeves"],
+        ["Balintawak Dress", "Traditional Filipino dress with tapis and butterfly sleeves"],
+        ["Maria Clara Dress", "Traditional Filipino formal dress with layered components"],
+        ["Kimona", "Traditional blouse often paired with a skirt"],
+        ["Saya", "Traditional Filipino skirt"],
+        ["Baro’t Saya", "Traditional Filipino blouse and skirt ensemble"],
+        ["Cheongsam/Qipao", "Fitted Chinese traditional dress"],
+        ["Hanbok Dress", "Korean-inspired traditional dress"],
+        ["Kimono-Inspired Robe", "Robe based on Japanese kimono structure"],
+        ["Sari Blouse", "Fitted blouse worn with sari"],
+        ["Kebaya", "Traditional blouse-dress worn in Southeast Asia"],
+        ["Maternity Dress", "Comfortable dress for pregnant women"],
+        ["Nursing Dress", "Dress designed for breastfeeding mothers"],
+        ["Nursing Blouse", "Top with breastfeeding access"],
+        ["Maternity Pants", "Adjustable pants for pregnancy"],
+        ["Scrub Suit", "Medical uniform top and pants"],
+        ["Lab Gown", "Protective garment for laboratory or medical use"],
+        ["Apron", "Protective garment for kitchen, workshop, or craft use"],
+        ["Chef Jacket", "Double-breasted kitchen uniform"],
+        ["Uniform Dress", "Dress used as institutional or office uniform"],
+        ["Choir Gown", "Long robe used for choir or ceremonial performances"],
+        ["Graduation Gown", "Academic gown for graduation ceremonies"],
+        ["Cape", "Sleeveless outer garment worn over shoulders"],
+        ["Cloak", "Long loose outer garment"]
+      ],
+      "Men": [
+        ["T-Shirt", "Basic casual upper garment"],
+        ["Polo Shirt", "Collared casual shirt"],
+        ["Short-Sleeve Polo", "Casual or office-casual wear"],
+        ["Casual Button-Down Shirt", "Relaxed shirt with front buttons"],
+        ["Henley Shirt", "Casual shirt with short button placket"],
+        ["Tank Top", "Sleeveless casual top"],
+        ["Hoodie", "Casual hooded sweatshirt"],
+        ["Sweatshirt", "Comfortable casual pullover"],
+        ["Jogger Pants", "Casual pants with elastic cuffs"],
+        ["Shorts", "Casual lower garment above the knee"],
+        ["Cargo Shorts", "Shorts with utility pockets"],
+        ["Cargo Pants", "Casual utility pants with side pockets"],
+        ["Denim Jeans", "Casual pants made from denim"],
+        ["Chinos", "Semi-formal or casual pants"],
+        ["Lounge Pants", "Comfortable pants for home wear"],
+        ["Pajama Set", "Sleepwear top and bottom"],
+        ["Long-Sleeve Polo", "Office or semi-formal wear"],
+        ["Dress Shirt", "Formal shirt worn with slacks or suit"],
+        ["Office Shirt", "Standard work shirt"],
+        ["Slacks", "Formal trousers"],
+        ["Blazer", "Jacket used for smart casual or formal events"],
+        ["Sports Coat", "Semi-formal jacket less structured than a suit jacket"],
+        ["Vest/Waistcoat", "Formal upper garment worn with suit"],
+        ["Cardigan", "Knitted or sewn front-opening outerwear"],
+        ["Men’s Jacket", "General outerwear pattern"],
+        ["Work Uniform Shirt", "Shirt used for office or service uniform"],
+        ["Utility Vest", "Vest with functional pockets"],
+        ["Barong Tagalog", "Traditional Filipino formal wear"],
+        ["Polo Barong", "Semi-formal Filipino attire"],
+        ["Suit", "Formal jacket and trousers set"],
+        ["Tuxedo", "Very formal evening attire"],
+        ["Dinner Jacket", "Formal jacket for evening events"],
+        ["Tailcoat", "Formal coat with long back tails"],
+        ["Formal Vest", "Waistcoat used under suit or tuxedo"],
+        ["Formal Trousers", "Pants used with suits or tuxedos"],
+        ["Mandarin Collar Shirt", "Formal shirt with standing collar"],
+        ["Necktie", "Formal accessory pattern"],
+        ["Bow Tie", "Formal neck accessory"],
+        ["Cummerbund", "Waist sash worn with tuxedo"],
+        ["Formal Overcoat", "Long coat worn over formal attire"],
+        ["Kurta", "Traditional long tunic in some cultures"],
+        ["Robe", "Loose garment for home or ceremonial use"],
+        ["Clerical Robe", "Formal religious or ceremonial garment"],
+        ["Kimono Robe", "Robe inspired by Japanese kimono structure"],
+        ["Dashiki", "Loose colorful traditional African shirt"],
+        ["Tunic", "Long upper garment worn in different cultures"],
+        ["Traditional Vest", "Cultural or ceremonial vest"],
+        ["Malong-Inspired Garment", "Wrap-around garment inspired by Mindanao textile tradition"],
+        ["Scrub Suit", "Medical uniform top and pants"],
+        ["Lab Coat", "Protective garment for laboratory or medical work"],
+        ["Chef Jacket", "Double-breasted kitchen uniform"],
+        ["Apron", "Protective garment for cooking or work"],
+        ["Coveralls", "One-piece work garment"],
+        ["Mechanic Uniform", "Durable shirt and pants for technical work"],
+        ["Security Uniform", "Shirt and trousers for security personnel"],
+        ["Raincoat", "Waterproof outerwear"],
+        ["Windbreaker", "Lightweight protective jacket"],
+        ["Work Jacket", "Durable jacket for field or manual work"],
+        ["Graduation Gown", "Academic gown for graduation"],
+        ["Choir Robe", "Ceremonial robe used in choir or religious events"]
+      ],
+      "Children": [
+        ["Casual Dress", "Everyday dress for children"],
+        ["Cotton Dress", "Soft and comfortable daily dress"],
+        ["Denim Dress", "Casual dress made of denim"],
+        ["T-Shirt", "Basic children’s top"],
+        ["Polo Shirt", "Collared shirt for casual or school use"],
+        ["Shorts", "Everyday lower garment"],
+        ["Pants", "Basic children’s trousers"],
+        ["Jogger Pants", "Comfortable pants with elastic cuffs"],
+        ["Leggings", "Stretch pants for children"],
+        ["Jumper Dress", "Sleeveless dress worn over a shirt"],
+        ["Romper Dress", "One-piece outfit with dress-like appearance"],
+        ["Overalls", "One-piece garment with shoulder straps"],
+        ["Playwear Set", "Comfortable top and bottom for play"],
+        ["Hoodie", "Casual hooded outerwear"],
+        ["Pajama Set", "Sleepwear for children"],
+        ["School Dress/Uniform", "Dress used as school uniform"],
+        ["School Blouse", "Blouse used for school uniform"],
+        ["School Polo", "Polo shirt used for school uniform"],
+        ["School Skirt", "Skirt used for school uniform"],
+        ["School Pants", "Pants used for school uniform"],
+        ["Pinafore Dress", "Sleeveless school dress worn over blouse"],
+        ["PE Uniform Shirt", "Shirt used for physical education"],
+        ["PE Shorts", "Shorts used for physical education"],
+        ["School Blazer", "Formal school jacket"],
+        ["Vest Uniform", "Sleeveless uniform garment"],
+        ["Necktie", "School accessory pattern"],
+        ["Apron Uniform", "Uniform used in specific school activities"],
+        ["Party Dress", "Dress for birthdays or celebrations"],
+        ["Flower Girl Dress", "Dress worn by young girls in weddings"],
+        ["Sunday Dress", "Semi-formal dress for church or family gatherings"],
+        ["Princess Dress", "Costume-style dress for events or play"],
+        ["Tutu Dress", "Dress with tulle skirt, often for parties"],
+        ["Formal Dress", "For ceremonies, recognition, or family events"],
+        ["Junior Gown", "Formal gown for young girls"],
+        ["Boys’ Formal Shirt", "Formal shirt for boys"],
+        ["Boys’ Vest", "Formal vest for boys"],
+        ["Boys’ Slacks", "Formal trousers for boys"],
+        ["Boys’ Suit", "Formal jacket and pants set"],
+        ["Boys’ Barong Tagalog", "Filipino formal wear for boys"],
+        ["Girls’ Filipiniana", "Traditional Filipino dress for girls"],
+        ["Costume Dress", "For school programs or themed events"],
+        ["Traditional Dress", "Cultural attire, e.g., Filipiniana for girls"],
+        ["Children’s Barong", "Traditional Filipino formal shirt for boys"],
+        ["Children’s Terno", "Filipiniana dress with butterfly sleeves"],
+        ["Children’s Kimona", "Traditional blouse for girls"],
+        ["Children’s Saya", "Traditional skirt"],
+        ["Cultural Costume", "Outfit for school or cultural programs"],
+        ["Festival Costume", "Costume used for performances or festivals"],
+        ["Dance Costume", "Costume used for dance performances"],
+        ["Raincoat", "Waterproof outerwear for children"],
+        ["Jacket", "Outerwear for cold or windy weather"],
+        ["Cardigan", "Light outerwear"],
+        ["Apron", "Protective garment for art, cooking, or school activities"],
+        ["Lab Coat Costume", "School science or costume garment"],
+        ["Scrub Costume", "Medical-themed children’s costume"],
+        ["Swim Cover-Up", "Garment worn over swimwear"],
+        ["Cape", "Costume or outer garment"],
+        ["Robe", "Loose garment for home or costume use"],
+        ["Choir Robe", "Robe used for school or church choir"]
+      ],
+      "Newborn / Infant": [
+        ["Onesie/Bodysuit", "One-piece baby clothing with snap buttons"],
+        ["Sleepsuit", "Full-body outfit for sleeping"],
+        ["Romper", "One-piece outfit for babies"],
+        ["Baby Dress", "Small dress for newborn girls"],
+        ["Baby Shirt", "Soft shirt for newborns"],
+        ["Baby Kimono Top", "Side-tie shirt for newborns"],
+        ["Infant Gown", "Loose baby gown for easy diaper changes"],
+        ["Footed Pajamas", "Pajamas with covered feet"],
+        ["Baby Shorts", "Small shorts for infants"],
+        ["Baby Pants", "Soft pants for babies"],
+        ["Leggings", "Stretch bottoms for babies"],
+        ["Bloomer Shorts", "Loose diaper-cover style shorts"],
+        ["Diaper Cover", "Cover worn over diapers"],
+        ["Baby Jacket/Cardigan", "Light outerwear for babies"],
+        ["Baby Hoodie", "Hooded outerwear for babies"],
+        ["Swaddle Cloth", "Cloth used to wrap newborns"],
+        ["Receiving Blanket", "Blanket used when carrying or receiving the baby"],
+        ["Sleep Sack", "Wearable blanket for sleeping"],
+        ["Infant Nightgown", "Loose sleeping gown for diaper changes"],
+        ["Footed Sleeper", "Full-body sleepwear with covered feet"],
+        ["Baby Pajama Set", "Baby sleepwear top and bottom"],
+        ["Baby Robe", "Soft robe for after bath"],
+        ["Baby Wrap", "Cloth wrap for comfort and carrying"],
+        ["Christening Gown", "Long white gown for baptism or dedication"],
+        ["Baptism Romper", "Formal baby romper for baptism"],
+        ["Dedication Gown", "Ceremonial baby gown"],
+        ["Baby Formal Dress", "Formal dress for infants"],
+        ["Baby Barong", "Filipino formal wear for baby boys"],
+        ["Baby Suit", "Small formal suit for infants"],
+        ["Baby Vest", "Formal vest for baby boys"],
+        ["Baby Tutu Dress", "Tulle dress for photoshoots or parties"],
+        ["Baby Party Dress", "Dress for birthdays or celebrations"],
+        ["Baby Costume", "Costume for themed events or photoshoots"],
+        ["Baby Bonnet", "Soft hat for newborns"],
+        ["Mittens", "Hand covers to prevent scratching"],
+        ["Booties", "Soft baby footwear"],
+        ["Bib", "Cloth worn during feeding"],
+        ["Burp Cloth", "Cloth placed on shoulder during burping"],
+        ["Baby Cap", "Simple soft head covering"],
+        ["Headband", "Baby hair accessory"],
+        ["Baby Scarf", "Soft neck accessory"],
+        ["Baby Apron Bib", "Larger bib for feeding"],
+        ["Pacifier Clip Fabric Strap", "Small fabric strap accessory"],
+        ["Baby Blanket", "Larger fabric blanket"],
+        ["Crib Sheet", "Fitted sheet for baby crib"],
+        ["Changing Mat Cover", "Fabric cover for changing pad"]
+      ]
     };
 
-    const blockMap = {
-      dress: ["dress", "gown", "terno", "filipiniana", "saya", "kimona", "kebaya", "cheongsam", "maria", "balintawak", "kaftan", "tunic", "uniform_dress", "christening", "infant_gown"],
-      top: ["shirt", "blouse", "barong", "polo", "top", "hoodie", "sweatshirt", "jacket", "blazer", "coat", "vest", "waistcoat", "kurta", "robe", "cape", "cloak", "apron", "bib", "bonnet", "mittens", "booties", "headband", "cap", "scarf"],
-      skirt: ["skirt", "culottes"],
-      pants: ["pants", "trousers", "slacks", "shorts", "jeans", "chinos", "jogger", "leggings", "coveralls", "romper", "onesie", "bodysuit", "sleepsuit", "pajama", "diaper", "bloomer"]
+    const groupSelect = document.getElementById("groupSelect");
+    const typeSelect = document.getElementById("typeSelect");
+    const typeDescription = document.getElementById("typeDescription");
+    const svg = document.getElementById("patternSvg");
+    const cutList = document.getElementById("cutList");
+    const sewList = document.getElementById("sewList");
+    const patternBadge = document.getElementById("patternBadge");
+    const measurementBadge = document.getElementById("measurementBadge");
+    const app = document.querySelector(".app");
+
+    const inputs = {
+      size: document.getElementById("sizeSelect"),
+      unit: document.getElementById("unitSelect"),
+      fit: document.getElementById("fitSelect"),
+      seam: document.getElementById("seamSelect"),
+      bust: document.getElementById("bust"),
+      waist: document.getElementById("waist"),
+      hip: document.getElementById("hip"),
+      shoulder: document.getElementById("shoulder"),
+      armhole: document.getElementById("armhole"),
+      neck: document.getElementById("neck"),
+      sleeve: document.getElementById("sleeve"),
+      length: document.getElementById("length"),
+      inseam: document.getElementById("inseam")
     };
 
-    const formIds = [
-      "wearerCategory", "garmentGroup", "garment", "bust", "waist", "hips", "height",
-      "shoulder", "armhole", "length", "sleeve", "neckline", "fit", "seam", "paper"
-    ];
-
-    document.addEventListener("DOMContentLoaded", () => {
-      buildGroupOptions();
-      buildGarmentOptions();
-      formIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener("input", handleInputChange);
+    function init() {
+      Object.keys(GARMENTS).forEach(group => {
+        groupSelect.add(new Option(group, group));
       });
-      generatePattern();
-    });
 
-    function handleInputChange(e) {
-      if (e.target.id === "wearerCategory") {
-        buildGroupOptions();
-        buildGarmentOptions();
-        setSuggestedMeasurements();
-      }
-
-      if (e.target.id === "garmentGroup") {
-        buildGarmentOptions();
-      }
-
+      groupSelect.value = "Women";
+      populateTypes();
+      attachEvents();
       generatePattern();
     }
 
-    function buildGroupOptions() {
-      const category = document.getElementById("wearerCategory").value;
-      const groupSelect = document.getElementById("garmentGroup");
-      const groups = GARMENT_LIBRARY[category].groups;
-      groupSelect.innerHTML = "";
+    function attachEvents() {
+      groupSelect.addEventListener("change", () => {
+        populateTypes();
+        setDefaultMeasurements();
+        generatePattern();
+      });
 
-      Object.keys(groups).forEach(key => {
-        const option = document.createElement("option");
-        option.value = key;
-        option.textContent = groups[key].label;
-        groupSelect.appendChild(option);
+      typeSelect.addEventListener("change", generatePattern);
+
+      document.getElementById("generateBtn").addEventListener("click", generatePattern);
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        setDefaultMeasurements();
+        generatePattern();
+      });
+
+      document.getElementById("printBtn").addEventListener("click", () => window.print());
+      document.getElementById("pngBtn").addEventListener("click", downloadPNG);
+
+      document.getElementById("themeBtn").addEventListener("click", () => {
+        const next = app.dataset.theme === "light" ? "dark" : "light";
+        app.dataset.theme = next;
+        document.getElementById("themeBtn").textContent = next === "light" ? "🌙 Night Mode" : "☀️ Day Mode";
+        generatePattern();
       });
     }
 
-    function buildGarmentOptions() {
-      const category = document.getElementById("wearerCategory").value;
-      const group = document.getElementById("garmentGroup").value;
-      const garmentSelect = document.getElementById("garment");
-      const items = GARMENT_LIBRARY[category].groups[group].items;
-
-      garmentSelect.innerHTML = "";
-      items.forEach(item => {
-        const option = document.createElement("option");
-        option.value = item[0];
-        option.textContent = item[1];
-        option.dataset.description = item[2];
-        garmentSelect.appendChild(option);
-      });
+    function populateTypes() {
+      const group = groupSelect.value;
+      typeSelect.innerHTML = "";
+      GARMENTS[group].forEach(([name]) => typeSelect.add(new Option(name, name)));
+      updateDescription();
     }
 
-    function value(id) {
-      const el = document.getElementById(id);
-      return el.type === "number" ? Number(el.value) : el.value;
+    function updateDescription() {
+      const group = groupSelect.value;
+      const type = typeSelect.value;
+      const found = GARMENTS[group].find(item => item[0] === type);
+      typeDescription.textContent = found ? found[1] : "";
     }
 
-    function getEase(fit) {
-      if (fit === "close") return 3;
-      if (fit === "relaxed") return 10;
-      if (fit === "loose") return 14;
-      return 6;
+    function setDefaultMeasurements() {
+      const group = groupSelect.value;
+      const defaults = {
+        "Women": [92, 74, 98, 39, 42, 36, 22, 105, 72],
+        "Men": [100, 88, 102, 46, 48, 40, 61, 74, 78],
+        "Children": [66, 58, 70, 29, 30, 28, 18, 68, 48],
+        "Newborn / Infant": [48, 46, 50, 18, 20, 22, 12, 42, 20]
+      }[group];
+
+      [inputs.bust, inputs.waist, inputs.hip, inputs.shoulder, inputs.armhole, inputs.neck, inputs.sleeve, inputs.length, inputs.inseam]
+        .forEach((input, index) => input.value = defaults[index]);
     }
 
-    function cmToPx(cm) {
-      return cm * 4;
+    function val(id) {
+      return Number(inputs[id].value || 0);
     }
 
-    function getCurrentGarmentInfo() {
-      const category = value("wearerCategory");
-      const group = value("garmentGroup");
-      const garment = value("garment");
-      const items = GARMENT_LIBRARY[category].groups[group].items;
-      const found = items.find(item => item[0] === garment);
-      return {
-        key: garment,
-        label: found ? found[1] : "Custom Garment",
-        description: found ? found[2] : "Custom garment pattern.",
-        categoryLabel: GARMENT_LIBRARY[category].label,
-        groupLabel: GARMENT_LIBRARY[category].groups[group].label
-      };
-    }
-
-    function getPatternBlock(garmentKey, category, group) {
-      const key = garmentKey.toLowerCase();
-
-      if (category === "newborn") {
-        if (["swaddle", "receiving_blanket", "baby_blanket", "crib_sheet", "changing_mat_cover"].some(word => key.includes(word))) return "rectangle";
-        if (["bonnet", "cap", "headband", "mittens", "booties", "bib", "burp", "scarf", "pacifier"].some(word => key.includes(word))) return "accessory";
-        return "baby";
-      }
-
-      if (category === "men") {
-        if (["pants", "trousers", "slacks", "shorts", "jeans", "chinos", "jogger", "coveralls"].some(word => key.includes(word))) return "mensPants";
-        if (["suit", "tuxedo", "blazer", "jacket", "coat", "barong", "shirt", "polo", "kurta", "robe", "dashiki", "tunic"].some(word => key.includes(word))) return "mensTop";
-        if (["tie", "bowtie", "cummerbund"].some(word => key.includes(word))) return "accessory";
-        return "mensTop";
-      }
-
-      if (category === "children") {
-        if (["pants", "shorts", "jogger", "leggings", "overalls"].some(word => key.includes(word))) return "childPants";
-        if (["shirt", "polo", "blazer", "vest", "apron", "robe", "cape", "hoodie", "cardigan"].some(word => key.includes(word))) return "childTop";
-        return "childDress";
-      }
-
-      if (["skirt", "culottes", "saya"].some(word => key.includes(word))) return "skirt";
-      if (["pants", "trousers", "culottes", "slacks", "maternity_pants"].some(word => key.includes(word))) return "pants";
-      if (["blouse", "shirt", "barong", "top", "blazer", "jacket", "coat", "kimona", "sari", "apron", "cape", "cloak", "scrub", "chef"].some(word => key.includes(word))) return "top";
-      return "womenDress";
-    }
-
-    function setSuggestedMeasurements() {
-      const category = value("wearerCategory");
-      const presets = {
-        women: { bust: 88, waist: 70, hips: 96, height: 162, shoulder: 38, armhole: 20, length: 95, sleeve: 24 },
-        men: { bust: 100, waist: 86, hips: 98, height: 170, shoulder: 45, armhole: 24, length: 72, sleeve: 58 },
-        children: { bust: 64, waist: 58, hips: 68, height: 120, shoulder: 29, armhole: 15, length: 58, sleeve: 18 },
-        newborn: { bust: 42, waist: 42, hips: 44, height: 55, shoulder: 16, armhole: 8, length: 36, sleeve: 12 }
+    function context() {
+      const unit = inputs.unit.value;
+      const fit = inputs.fit.value;
+      const easeMap = {
+        slim: unit === "cm" ? 2 : 0.75,
+        regular: unit === "cm" ? 6 : 2.25,
+        loose: unit === "cm" ? 12 : 4.75
       };
 
-      const p = presets[category];
-      Object.keys(p).forEach(id => document.getElementById(id).value = p[id]);
+      const m = {
+        unit,
+        fit,
+        seam: Number(inputs.seam.value),
+        ease: easeMap[fit],
+        bust: val("bust"),
+        waist: val("waist"),
+        hip: val("hip"),
+        shoulder: val("shoulder"),
+        armhole: val("armhole"),
+        neck: val("neck"),
+        sleeve: val("sleeve"),
+        length: val("length"),
+        inseam: val("inseam")
+      };
+
+      m.quarterBust = (m.bust + m.ease) / 4;
+      m.quarterWaist = (m.waist + m.ease) / 4;
+      m.quarterHip = (m.hip + m.ease) / 4;
+      return m;
+    }
+
+    function px(n, scale = 5) {
+      return Math.max(18, n * scale);
+    }
+
+    function clearSvg() {
+      svg.innerHTML = `
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+          </marker>
+          <marker id="arrowStart" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto">
+            <path d="M9,0 L9,6 L0,3 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+      `;
+    }
+
+    function add(tag, attrs = {}, parent = svg) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      parent.appendChild(el);
+      return el;
+    }
+
+    function path(d, cls = "pattern-line") {
+      add("path", { d, class: cls });
+    }
+
+    function line(x1, y1, x2, y2, cls = "guide") {
+      add("line", { x1, y1, x2, y2, class: cls });
+    }
+
+    function text(x, y, content, cls = "label") {
+      add("text", { x, y, class: cls }, svg).textContent = content;
+    }
+
+    function circle(x, y, r = 4, cls = "notch") {
+      add("circle", { cx: x, cy: y, r, class: cls });
+    }
+
+    function seamRect(x, y, w, h) {
+      add("rect", { x: x - 8, y: y - 8, width: w + 16, height: h + 16, rx: 16, class: "seam" });
+    }
+
+    function makeBodice(x, y, w, h, title, options = {}) {
+      const neck = options.deepNeck ? 42 : 25;
+      const waistCurve = options.fitted ? 18 : 8;
+      const sleeveDrop = options.sleeveless ? 38 : 28;
+      const d = `
+        M ${x + 26} ${y}
+        C ${x + 50} ${y + neck}, ${x + w - 50} ${y + neck}, ${x + w - 26} ${y}
+        L ${x + w} ${y + sleeveDrop}
+        C ${x + w - 10} ${y + 82}, ${x + w - 12} ${y + 112}, ${x + w - waistCurve} ${y + h}
+        L ${x + waistCurve} ${y + h}
+        C ${x + 12} ${y + 112}, ${x + 10} ${y + 82}, ${x} ${y + sleeveDrop}
+        Z
+      `;
+      path(d);
+      path(d.replaceAll("M ", "M ").replaceAll("Z", "Z"), "seam");
+      line(x + w / 2, y + 55, x + w / 2, y + h - 18, "grain");
+      text(x + 18, y + 24, title);
+      text(x + 26, y + h + 22, `Width: ${Math.round(w / 5)} ${inputs.unit.value}`, "measure");
+      circle(x + 8, y + 78);
+      circle(x + w - 8, y + 78);
+    }
+
+    function makeSleeve(x, y, w, h, title, butterfly = false) {
+      const d = butterfly
+        ? `M ${x + w / 2} ${y} C ${x + w + 45} ${y + 12}, ${x + w + 26} ${y + h - 6}, ${x + w / 2} ${y + h} C ${x - 26} ${y + h - 8}, ${x - 45} ${y + 12}, ${x + w / 2} ${y} Z`
+        : `M ${x + 22} ${y + h} C ${x + 10} ${y + 70}, ${x + 34} ${y + 18}, ${x + w / 2} ${y} C ${x + w - 34} ${y + 18}, ${x + w - 10} ${y + 70}, ${x + w - 22} ${y + h} Z`;
+      path(d, "pattern-line soft");
+      path(d, "seam");
+      line(x + w / 2, y + 18, x + w / 2, y + h - 18, "grain");
+      text(x + 12, y + 24, title);
+      circle(x + 26, y + h - 18);
+      circle(x + w - 26, y + h - 18);
+    }
+
+    function makeSkirt(x, y, topW, bottomW, h, title, highLow = false) {
+      const left = x + (bottomW - topW) / 2;
+      const right = left + topW;
+      const bottomY = y + h;
+      const d = highLow
+        ? `M ${left} ${y} L ${right} ${y} L ${x + bottomW} ${bottomY - 18} C ${x + bottomW / 2} ${bottomY + 38}, ${x + bottomW / 2 - 30} ${bottomY - 26}, ${x} ${bottomY - 52} Z`
+        : `M ${left} ${y} L ${right} ${y} L ${x + bottomW} ${bottomY} C ${x + bottomW * 0.72} ${bottomY + 20}, ${x + bottomW * 0.28} ${bottomY + 20}, ${x} ${bottomY} Z`;
+      path(d);
+      path(d, "seam");
+      line(x + bottomW / 2, y + 22, x + bottomW / 2, bottomY - 18, "grain");
+      text(x + 18, y + 30, title);
+      text(x + 18, bottomY + 28, `Hem: ${Math.round(bottomW / 5)} ${inputs.unit.value}`, "measure");
+      circle(left + 12, y + 4);
+      circle(right - 12, y + 4);
+    }
+
+    function makePantsLeg(x, y, w, h, title, wide = false, shorts = false) {
+      const hemW = wide ? w + 58 : w + 12;
+      const mid = x + w / 2;
+      const actualH = shorts ? h * 0.55 : h;
+      const d = `
+        M ${x + 28} ${y}
+        C ${x + 48} ${y + 40}, ${x + 58} ${y + 72}, ${x + 45} ${y + 115}
+        L ${mid - hemW / 2} ${y + actualH}
+        L ${mid + hemW / 2} ${y + actualH}
+        L ${x + w - 40} ${y + 112}
+        C ${x + w - 52} ${y + 72}, ${x + w - 42} ${y + 38}, ${x + w - 18} ${y}
+        Z
+      `;
+      path(d, "pattern-line soft");
+      path(d, "seam");
+      line(mid, y + 22, mid, y + actualH - 16, "grain");
+      text(x + 10, y + 25, title);
+      text(x + 10, y + actualH + 24, shorts ? "Shorts length" : `Inseam: ${val("inseam")} ${inputs.unit.value}`, "measure");
+      circle(x + 44, y + 110);
+      circle(x + w - 42, y + 110);
+    }
+
+    function makeShirtPanel(x, y, w, h, title, placket = false, collar = true) {
+      const d = `
+        M ${x + 30} ${y}
+        C ${x + 48} ${y + 30}, ${x + w - 48} ${y + 30}, ${x + w - 30} ${y}
+        L ${x + w} ${y + 44}
+        C ${x + w - 10} ${y + 94}, ${x + w - 8} ${y + h - 18}, ${x + w - 22} ${y + h}
+        L ${x + 22} ${y + h}
+        C ${x + 8} ${y + h - 18}, ${x + 10} ${y + 94}, ${x} ${y + 44}
+        Z
+      `;
+      path(d);
+      path(d, "seam");
+      if (placket) {
+        add("rect", { x: x + w / 2 - 10, y: y + 24, width: 20, height: h - 28, rx: 8, class: "guide" });
+        text(x + w / 2 + 16, y + 80, "button placket", "small-label");
+      }
+      if (collar) {
+        add("path", { d: `M ${x + 48} ${y - 8} Q ${x + w / 2} ${y - 34}, ${x + w - 48} ${y - 8} L ${x + w - 68} ${y + 14} Q ${x + w / 2} ${y}, ${x + 68} ${y + 14} Z`, class: "pattern-line soft" });
+      }
+      line(x + w / 2, y + 45, x + w / 2, y + h - 18, "grain");
+      text(x + 16, y + 28, title);
+    }
+
+    function makeJacketPanel(x, y, w, h, title, coat = false) {
+      const d = `
+        M ${x + 36} ${y}
+        C ${x + 58} ${y + 28}, ${x + w - 58} ${y + 28}, ${x + w - 36} ${y}
+        L ${x + w} ${y + 54}
+        L ${x + w - 8} ${y + h}
+        L ${x + w / 2 + 10} ${y + h}
+        L ${x + w / 2 + 22} ${y + 70}
+        L ${x + w / 2 - 22} ${y + 70}
+        L ${x + w / 2 - 10} ${y + h}
+        L ${x + 8} ${y + h}
+        L ${x} ${y + 54}
+        Z
+      `;
+      path(d);
+      path(d, "seam");
+      line(x + w / 2, y + 78, x + w / 2, y + h - 22, "grain");
+      add("rect", { x: x + 30, y: y + h * 0.46, width: 48, height: 24, rx: 7, class: "guide" });
+      add("rect", { x: x + w - 78, y: y + h * 0.46, width: 48, height: 24, rx: 7, class: "guide" });
+      text(x + 14, y + 28, title);
+      if (coat) text(x + 20, y + h + 24, "Add lining and facing pieces", "measure");
+    }
+
+    function makeBabyBody(x, y, w, h, title, gown = false) {
+      const d = gown
+        ? `M ${x + 30} ${y} C ${x + 45} ${y + 24}, ${x + w - 45} ${y + 24}, ${x + w - 30} ${y} L ${x + w} ${y + 42} L ${x + w + 24} ${y + h} C ${x + w * 0.65} ${y + h + 24}, ${x + w * 0.35} ${y + h + 24}, ${x - 24} ${y + h} L ${x} ${y + 42} Z`
+        : `M ${x + 30} ${y} C ${x + 45} ${y + 24}, ${x + w - 45} ${y + 24}, ${x + w - 30} ${y} L ${x + w} ${y + 46} C ${x + w - 8} ${y + 98}, ${x + w - 22} ${y + h - 20}, ${x + w / 2 + 34} ${y + h} Q ${x + w / 2} ${y + h - 24}, ${x + w / 2 - 34} ${y + h} C ${x + 22} ${y + h - 20}, ${x + 8} ${y + 98}, ${x} ${y + 46} Z`;
+      path(d);
+      path(d, "seam");
+      line(x + w / 2, y + 38, x + w / 2, y + h - 26, "grain");
+      text(x + 18, y + 28, title);
+      text(x + 18, y + h + 26, "Baby-safe rounded seams", "measure");
+      circle(x + w / 2 - 18, y + h - 8);
+      circle(x + w / 2 + 18, y + h - 8);
+    }
+
+    function makeAccessory(x, y, w, h, title, kind) {
+      let d = "";
+      if (kind === "bonnet") d = `M ${x} ${y + h} C ${x - 18} ${y + 35}, ${x + w / 2} ${y - 28}, ${x + w} ${y + h} Z`;
+      else if (kind === "mitten") d = `M ${x + 20} ${y + h} C ${x - 25} ${y + 55}, ${x + 20} ${y - 22}, ${x + w / 2} ${y + 26} C ${x + w + 22} ${y - 8}, ${x + w + 14} ${y + 80}, ${x + w - 10} ${y + h} Z`;
+      else if (kind === "bib") d = `M ${x + 28} ${y} C ${x + 44} ${y + 42}, ${x + w - 44} ${y + 42}, ${x + w - 28} ${y} C ${x + w + 40} ${y + 100}, ${x + w - 8} ${y + h}, ${x + w / 2} ${y + h + 18} C ${x + 8} ${y + h}, ${x - 40} ${y + 100}, ${x + 28} ${y} Z`;
+      else d = `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`;
+      path(d, "pattern-line soft");
+      path(d, "seam");
+      text(x + 16, y + 30, title);
+      line(x + w / 2, y + 30, x + w / 2, y + h - 18, "grain");
+    }
+
+    function getTemplate(type, group) {
+      const t = type.toLowerCase();
+
+      if (group === "Newborn / Infant") {
+        if (/bonnet|cap/.test(t)) return "babyBonnet";
+        if (/mitten|booties/.test(t)) return "babyMitten";
+        if (/bib|burp|strap|headband|scarf/.test(t)) return "babyBib";
+        if (/blanket|swaddle|receiving|crib|changing|wrap/.test(t)) return "rectangle";
+        if (/pants|shorts|leggings|bloomer|diaper/.test(t)) return "babyBottom";
+        if (/shirt|kimono|barong|vest|suit|jacket|cardigan|hoodie/.test(t)) return "babyTop";
+        return "babyOnesie";
+      }
+
+      if (/pants|trousers|slacks|jeans|chinos|jogger|leggings|shorts|culottes/.test(t)) return "bottoms";
+      if (/skirt|saya/.test(t)) return "skirt";
+      if (/blazer|coat|jacket|raincoat|windbreaker|overcoat|cardigan|hoodie|sweatshirt|coveralls|suit|tuxedo|tailcoat/.test(t)) return "jacket";
+      if (/shirt|polo|blouse|barong|kimona|kebaya|sari|kurta|dashiki|tunic|tank|henley|scrub|chef|lab|uniform shirt|mandarin/.test(t)) return "top";
+      if (/apron|cape|cloak|robe|gown|choir|graduation|malong|kimono robe|kaftan/.test(t) && !/dress|gown/.test(t)) return "robe";
+      if (/necktie|bow tie|cummerbund/.test(t)) return "accessory";
+      return "dress";
     }
 
     function generatePattern() {
-      const garmentInfo = getCurrentGarmentInfo();
-      const category = value("wearerCategory");
-      const group = value("garmentGroup");
-      const patternBlock = getPatternBlock(garmentInfo.key, category, group);
-      const bust = value("bust");
-      const waist = value("waist");
-      const hips = value("hips");
-      const height = value("height");
-      const shoulder = value("shoulder");
-      const armhole = value("armhole");
-      const length = value("length");
-      const sleeve = value("sleeve");
-      const neckline = value("neckline");
-      const fit = value("fit");
-      const seam = Number(value("seam"));
-      const paper = value("paper");
-      const ease = getEase(fit);
+      updateDescription();
+      const group = groupSelect.value;
+      const type = typeSelect.value;
+      const m = context();
+      const template = getTemplate(type, group);
 
-      document.getElementById("patternName").textContent = garmentInfo.label;
-      document.getElementById("categoryValue").textContent = garmentInfo.categoryLabel;
-      document.getElementById("easeValue").textContent = `${ease} cm`;
-      document.getElementById("seamValue").textContent = `${seam} cm`;
-      document.getElementById("garmentInfoTitle").textContent = `${garmentInfo.groupLabel} · ${garmentInfo.label}`;
-      document.getElementById("garmentInfoDescription").textContent = garmentInfo.description;
+      clearSvg();
+      patternBadge.textContent = `${group} • ${type}`;
+      measurementBadge.textContent = `${capitalize(m.fit)} fit • ${m.seam}${m.seam === 0.5 ? " inch" : " cm"} seam`;
+      svg.setAttribute("viewBox", "0 0 1200 760");
 
-      const svg = document.getElementById("patternSvg");
-      svg.innerHTML = "";
+      if (template === "dress") drawDress(type, m);
+      else if (template === "top") drawTop(type, m);
+      else if (template === "bottoms") drawBottoms(type, m);
+      else if (template === "skirt") drawSkirtOnly(type, m);
+      else if (template === "jacket") drawJacket(type, m);
+      else if (template === "robe") drawRobe(type, m);
+      else if (template === "accessory") drawAccessory(type, m);
+      else if (template === "babyOnesie") drawBabyOnesie(type, m);
+      else if (template === "babyTop") drawBabyTop(type, m);
+      else if (template === "babyBottom") drawBabyBottom(type, m);
+      else if (template === "babyBonnet") drawBabyAccessory(type, m, "bonnet");
+      else if (template === "babyMitten") drawBabyAccessory(type, m, "mitten");
+      else if (template === "babyBib") drawBabyAccessory(type, m, "bib");
+      else if (template === "rectangle") drawRectanglePattern(type, m);
 
-      const data = { garmentInfo, category, group, patternBlock, bust, waist, hips, height, shoulder, armhole, length, sleeve, neckline, fit, seam, paper, ease };
-      drawTitle(svg, garmentInfo, bust, waist, hips, height, fit, seam, paper);
-      drawCategoryPattern(svg, data);
+      addTitleBlock(group, type, m);
     }
 
-    function drawCategoryPattern(svg, data) {
-      const label = `${data.garmentInfo.label.toUpperCase()} PATTERN`;
+    function drawDress(type, m) {
+      const t = type.toLowerCase();
+      const fitted = /bodycon|sheath|pencil|mermaid|cheongsam|qipao/.test(t);
+      const flare = /a-line|ball|gown|maxi|wedding|bridesmaid|flower|princess|tutu|evening|sundress|empire|high-low|trumpet/.test(t);
+      const butterfly = /filipiniana|terno|balintawak|maria clara/.test(t);
+      const wrap = /wrap|nursing/.test(t);
+      const sleeveless = /halter|slip|sleeveless|jumper|apron/.test(t);
+      const highLow = /high-low/.test(t);
 
-      if (data.patternBlock === "womenDress") {
-        drawWomenDressPattern(svg, { ...data, label });
-        return;
+      const bodiceW = clamp(px(m.quarterBust, 5.2), 165, 245);
+      const bodiceH = clamp(px(m.length * 0.32, 3.2), 170, 235);
+      const skirtH = clamp(px(m.length * 0.55, 2.6), 230, 390);
+      const topW = clamp(px(m.quarterWaist, 5.2), 130, 210);
+      const bottomW = flare ? topW + 210 : fitted ? topW + 38 : topW + 115;
+
+      makeBodice(72, 80, bodiceW, bodiceH, "Front Bodice", { fitted, deepNeck: /evening|cocktail|wedding|off-shoulder|halter|slip/.test(t), sleeveless });
+      makeBodice(340, 80, bodiceW, bodiceH, "Back Bodice", { fitted, sleeveless });
+      if (wrap) {
+        line(88, 118, 72 + bodiceW - 18, 80 + bodiceH - 8, "guide");
+        text(96, 160, "wrap overlap / tie extension", "small-label");
       }
+      makeSkirt(100, 370, topW, bottomW, skirtH, "Skirt Panel", highLow);
 
-      if (data.patternBlock === "top") {
-        drawBodice(svg, {
-          x: 80, y: 105,
-          bust: data.bust, waist: data.waist, hips: data.hips,
-          shoulder: data.shoulder, armhole: data.armhole,
-          length: Math.min(data.length, 72), sleeve: data.sleeve,
-          neckline: data.neckline, ease: data.ease, seam: data.seam,
-          label
-        });
-        drawSleeve(svg, { x: 570, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease, seam: data.seam });
-        return;
-      }
-
-      if (data.patternBlock === "skirt") {
-        drawSkirt(svg, { x: 190, y: 120, waist: data.waist, hips: data.hips, length: data.length, ease: data.ease, seam: data.seam, label });
-        return;
-      }
-
-      if (data.patternBlock === "pants") {
-        drawPants(svg, { x: 160, y: 100, waist: data.waist, hips: data.hips, height: data.height, length: data.length, ease: data.ease, seam: data.seam, label });
-        return;
-      }
-
-      if (data.patternBlock === "mensTop") {
-        drawMensTopPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "mensPants") {
-        drawMensPantsPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "childDress") {
-        drawChildDressPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "childTop") {
-        drawChildTopPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "childPants") {
-        drawChildPantsPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "baby") {
-        drawBabyPattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "rectangle") {
-        drawRectanglePattern(svg, { ...data, label });
-        return;
-      }
-
-      if (data.patternBlock === "accessory") {
-        drawAccessoryPattern(svg, { ...data, label });
-      }
-    }
-
-    function drawWomenDressPattern(svg, data) {
-      const x = 65;
-      const y = 105;
-      const bodiceL = Math.min(cmToPx(data.height * 0.24), 165);
-      const skirtL = Math.min(cmToPx(data.length) - bodiceL, 320);
-      const bustW = cmToPx((data.bust + data.ease) / 4);
-      const waistW = cmToPx((data.waist + data.ease) / 4);
-      const hemW = Math.max(cmToPx((data.hips + data.ease) / 3), waistW + 120);
-      const seamPx = cmToPx(data.seam);
-
-      const bodice = [
-        [x + 35, y],
-        [x + cmToPx(data.shoulder / 2), y + 18],
-        [x + bustW, y + cmToPx(data.armhole)],
-        [x + waistW, y + bodiceL],
-        [x + 18, y + bodiceL],
-        [x + 5, y + cmToPx(data.armhole)],
-        [x, y + 42],
-        [x + 35, y]
-      ];
-
-      const skirt = [
-        [x + 18, y + bodiceL],
-        [x + waistW, y + bodiceL],
-        [x + hemW, y + bodiceL + skirtL],
-        [x - 45, y + bodiceL + skirtL],
-        [x + 18, y + bodiceL]
-      ];
-
-      addPath(svg, bodice, "pattern-line");
-      addPath(svg, offsetPoints(bodice, seamPx), "seam-line");
-      addPath(svg, skirt, "pattern-line");
-      addPath(svg, offsetPoints(skirt, seamPx), "seam-line");
-
-      addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
-      addLine(svg, x + 20, y + bodiceL, x + waistW + 6, y + bodiceL, "guide-line");
-      addText(svg, x + 24, y + bodiceL - 8, "Waist seam", "small-label", 11);
-      drawDart(svg, x + waistW * 0.55, y + 42, 18, bodiceL - 52);
-      drawGrainline(svg, x + waistW / 2, y + 80, y + bodiceL + skirtL - 50);
-      drawNotch(svg, x + bustW - 8, y + cmToPx(data.armhole));
-
-      drawSleeve(svg, { x: 590, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease, seam: data.seam });
-      addText(svg, 590, 430, "Separate sleeve included", "small-label", 12);
-    }
-
-    function drawMensTopPattern(svg, data) {
-      const x = 65;
-      const y = 105;
-      const bodyL = Math.min(cmToPx(data.length), 340);
-      const chestW = cmToPx((data.bust + data.ease + 6) / 4);
-      const waistW = cmToPx((data.waist + data.ease + 4) / 4);
-      const hipW = cmToPx((data.hips + data.ease + 4) / 4);
-      const shoulderW = cmToPx(data.shoulder / 2);
-      const armDepth = cmToPx(data.armhole);
-      const seamPx = cmToPx(data.seam);
-
-      const body = [
-        [x + 32, y],
-        [x + shoulderW + 16, y + 18],
-        [x + chestW + 20, y + armDepth],
-        [x + hipW + 10, y + bodyL],
-        [x - 8, y + bodyL],
-        [x + 2, y + armDepth],
-        [x, y + 40],
-        [x + 32, y]
-      ];
-
-      addPath(svg, body, "pattern-line");
-      addPath(svg, offsetPoints(body, seamPx), "seam-line");
-      addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
-      addLine(svg, x + chestW / 2, y + 12, x + chestW / 2, y + bodyL - 25, "guide-line");
-      addText(svg, x + chestW / 2 + 8, y + 80, "Center front / button placket", "small-label", 11);
-      addLine(svg, x + 25, y + armDepth + 30, x + chestW + 5, y + armDepth + 30, "guide-line");
-      addText(svg, x + 30, y + armDepth + 22, "Chest line", "small-label", 11);
-      drawNotch(svg, x + chestW + 16, y + armDepth);
-
-      drawSleeve(svg, { x: 570, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease + 6, seam: data.seam });
-      drawCollarPiece(svg, 590, 460, data);
-    }
-
-    function drawMensPantsPattern(svg, data) {
-      drawPants(svg, { x: 120, y: 105, waist: data.waist, hips: data.hips, height: data.height, length: data.length, ease: data.ease + 4, seam: data.seam, label: data.label });
-      drawPants(svg, { x: 500, y: 105, waist: data.waist + 4, hips: data.hips + 6, height: data.height, length: data.length, ease: data.ease + 6, seam: data.seam, label: "BACK PANTS BLOCK" });
-    }
-
-    function drawChildDressPattern(svg, data) {
-      const scaled = { ...data, ease: data.ease + 2, length: Math.min(data.length, 75) };
-      drawWomenDressPattern(svg, scaled);
-      addText(svg, 60, 640, "Child pattern uses softer ease, shorter lengths, and simpler assembly lines.", "small-label", 12);
-    }
-
-    function drawChildTopPattern(svg, data) {
-      drawBodice(svg, {
-        x: 90, y: 115,
-        bust: data.bust, waist: data.waist, hips: data.hips,
-        shoulder: data.shoulder, armhole: data.armhole,
-        length: Math.min(data.length, 55), sleeve: data.sleeve,
-        neckline: data.neckline, ease: data.ease + 3, seam: data.seam,
-        label: data.label
-      });
-      drawSleeve(svg, { x: 560, y: 130, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease + 3, seam: data.seam });
-    }
-
-    function drawChildPantsPattern(svg, data) {
-      drawPants(svg, { x: 170, y: 110, waist: data.waist, hips: data.hips, height: data.height, length: Math.min(data.length, 75), ease: data.ease + 3, seam: data.seam, label: data.label });
-      addText(svg, 165, 625, "Elastic waistband allowance recommended for children’s wear.", "small-label", 12);
-    }
-
-    function drawBabyPattern(svg, data) {
-      const x = 120;
-      const y = 115;
-      const bodyW = cmToPx((data.bust + data.ease) / 2.4);
-      const bodyL = Math.min(cmToPx(data.length), 250);
-      const sleeveW = cmToPx(Math.max(data.sleeve, 8));
-      const legW = bodyW * 0.32;
-      const seamPx = cmToPx(data.seam);
-
-      const p = [
-        [x + bodyW * 0.38, y],
-        [x + bodyW * 0.62, y],
-        [x + bodyW * 0.82, y + 35],
-        [x + bodyW + sleeveW, y + 70],
-        [x + bodyW * 0.84, y + 110],
-        [x + bodyW * 0.72, y + bodyL],
-        [x + bodyW * 0.55, y + bodyL],
-        [x + bodyW * 0.50, y + bodyL - 45],
-        [x + bodyW * 0.45, y + bodyL],
-        [x + bodyW * 0.28, y + bodyL],
-        [x + bodyW * 0.16, y + 110],
-        [x - sleeveW, y + 70],
-        [x + bodyW * 0.18, y + 35],
-        [x + bodyW * 0.38, y]
-      ];
-
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, seamPx), "seam-line");
-      addText(svg, x + 20, y - 16, data.label, "svg-label", 14);
-      addCurve(svg, x + bodyW * 0.38, y, x + bodyW * 0.5, y + 32, x + bodyW * 0.62, y, "guide-line");
-      addLine(svg, x + bodyW / 2, y + 45, x + bodyW / 2, y + bodyL - 30, "guide-line");
-      addText(svg, x + bodyW / 2 + 8, y + 75, "Snap opening / fold line", "small-label", 11);
-      drawNotch(svg, x + bodyW * 0.84, y + 110);
-      drawNotch(svg, x + bodyW * 0.16, y + 110);
-
-      drawCollarPiece(svg, 565, 140, data, "NECK BINDING");
-      drawRectanglePiece(svg, 560, 250, 210, 70, "CUFF / LEG BINDING");
-    }
-
-    function drawRectanglePattern(svg, data) {
-      const x = 150;
-      const y = 140;
-      const w = Math.min(cmToPx(data.bust + data.ease), 460);
-      const h = Math.min(cmToPx(data.length), 360);
-      drawRectanglePiece(svg, x, y, w, h, data.label);
-      addText(svg, x + 18, y + h + 35, "Rectangular pattern: add fold, hem allowance, and corner finishing.", "small-label", 12);
-    }
-
-    function drawAccessoryPattern(svg, data) {
-      const x = 120;
-      const y = 150;
-      const key = data.garmentInfo.key.toLowerCase();
-
-      if (key.includes("bib")) {
-        const p = [[x + 90, y], [x + 180, y + 50], [x + 160, y + 210], [x + 25, y + 210], [x, y + 50], [x + 90, y]];
-        addPath(svg, p, "pattern-line");
-        addPath(svg, offsetPoints(p, cmToPx(data.seam)), "seam-line");
-        addCurve(svg, x + 60, y + 25, x + 90, y + 85, x + 120, y + 25, "guide-line");
-        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
-        return;
-      }
-
-      if (key.includes("bonnet") || key.includes("cap")) {
-        addCurve(svg, x, y + 150, x + 120, y - 70, x + 240, y + 150, "pattern-line");
-        addLine(svg, x, y + 150, x + 240, y + 150, "pattern-line");
-        drawRectanglePiece(svg, x + 300, y + 60, 230, 50, "BONNET BAND");
-        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
-        return;
-      }
-
-      if (key.includes("mittens")) {
-        const mitten = [[x + 35, y], [x + 95, y + 10], [x + 125, y + 80], [x + 105, y + 160], [x + 25, y + 160], [x, y + 80], [x + 35, y]];
-        addPath(svg, mitten, "pattern-line");
-        addPath(svg, offsetPoints(mitten, cmToPx(data.seam)), "seam-line");
-        drawRectanglePiece(svg, x + 220, y + 100, 120, 42, "ELASTIC CUFF");
-        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
-        return;
-      }
-
-      drawRectanglePiece(svg, x, y, 360, 110, data.label);
-      drawRectanglePiece(svg, x, y + 170, 260, 70, "SECONDARY STRAP / BAND");
-      addText(svg, x + 10, y + 290, "Accessory pattern uses simplified rectangles or curved pieces depending on item.", "small-label", 12);
-    }
-
-    function drawCollarPiece(svg, x, y, data, label = "COLLAR / NECK BAND") {
-      const w = Math.min(cmToPx(data.bust / 3), 210);
-      const h = 45;
-      const p = [[x, y + h], [x + 15, y], [x + w - 15, y], [x + w, y + h], [x, y + h]];
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, cmToPx(data.seam)), "seam-line");
-      addText(svg, x + 8, y - 12, label, "svg-label", 13);
-      addText(svg, x + 14, y + h + 24, "Cut 2 or cut on fold", "small-label", 11);
-    }
-
-    function drawRectanglePiece(svg, x, y, w, h, label) {
-      const p = [[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y]];
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, 8), "seam-line");
-      addText(svg, x + 12, y - 14, label, "svg-label", 13);
-      drawGrainline(svg, x + w / 2, y + 20, y + h - 20);
-    }
-
-    function drawTitle(svg, garmentInfo, bust, waist, hips, height, fit, seam, paper) {
-      addText(svg, 34, 38, "SewTruly Custom Sewing Pattern", "svg-label", 18);
-      addText(
-        svg,
-        34,
-        62,
-        `${garmentInfo.categoryLabel} | ${garmentInfo.label} | Bust/Chest: ${bust}cm | Waist: ${waist}cm | Hips/Seat: ${hips}cm | Height: ${height}cm | Fit: ${fit} | Seam: ${seam}cm | ${paper.toUpperCase()}`,
-        "small-label",
-        11
-      );
-      addLine(svg, 30, 78, 870, 78, "guide-line");
-    }
-
-    function drawBodice(svg, data) {
-      const {
-        x, y, bust, waist, hips, shoulder,
-        armhole, length, neckline, ease, seam, label
-      } = data;
-
-      const bustW = cmToPx((bust + ease) / 4);
-      const waistW = cmToPx((waist + ease) / 4);
-      const hipW = cmToPx((hips + ease) / 4);
-      const shoulderW = cmToPx(shoulder / 2);
-      const armDepth = cmToPx(armhole);
-      const garmentL = Math.min(cmToPx(length), 500);
-      const seamPx = cmToPx(seam);
-
-      const neckW = neckline === "collar" || neckline === "mandarin" ? 30 : 34;
-      const neckD = neckline === "v" ? 78 : neckline === "square" ? 48 : 36;
-
-      const p = [
-        [x + neckW, y],
-        [x + shoulderW, y + 18],
-        [x + bustW, y + armDepth],
-        [x + hipW, y + garmentL],
-        [x + 10, y + garmentL],
-        [x + 6, y + armDepth],
-        [x, y + neckD],
-        [x + neckW, y]
-      ];
-
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, seamPx), "seam-line");
-
-      if (neckline === "v") {
-        addLine(svg, x, y + neckD, x + neckW, y, "guide-line");
-      } else if (neckline === "square") {
-        addLine(svg, x, y + neckD, x + neckW, y + neckD, "guide-line");
-        addLine(svg, x + neckW, y + neckD, x + neckW, y, "guide-line");
-      } else if (neckline === "collar" || neckline === "mandarin") {
-        addLine(svg, x - 5, y + 32, x + neckW + 18, y + 32, "guide-line");
-        addText(svg, x + 5, y + 25, neckline === "mandarin" ? "Mandarin collar" : "Collar stand", "small-label", 11);
+      if (butterfly) {
+        makeSleeve(760, 86, 210, 170, "Butterfly Sleeve", true);
+        makeSleeve(788, 310, 155, 135, "Sleeve Lining", true);
+      } else if (!sleeveless) {
+        makeSleeve(760, 100, 150, 210, "Sleeve");
       } else {
-        addCurve(svg, x, y + neckD, x + 8, y + 8, x + neckW, y, "guide-line");
+        add("path", { d: "M 760 135 Q 835 90 910 135 L 890 180 Q 835 145 780 180 Z", class: "pattern-line soft" });
+        text(770, 130, "Armhole Facing");
       }
 
-      const bustY = y + armDepth + 35;
-      const waistY = y + garmentL * 0.48;
-      const hipY = y + garmentL * 0.72;
+      if (/peplum/.test(t)) {
+        makeSkirt(735, 470, 145, 260, 95, "Peplum Flounce");
+      }
 
-      addLine(svg, x + 25, bustY, x + bustW - 18, bustY, "guide-line");
-      addLine(svg, x + 25, waistY, x + waistW, waistY, "guide-line");
-      addLine(svg, x + 25, hipY, x + hipW, hipY, "guide-line");
-
-      addText(svg, x + 20, y - 16, label, "svg-label", 14);
-      addText(svg, x + 28, bustY - 8, "Bust / Chest line", "small-label", 11);
-      addText(svg, x + 28, waistY - 8, "Waist line", "small-label", 11);
-      addText(svg, x + 28, hipY - 8, "Hip / Seat line", "small-label", 11);
-
-      drawGrainline(svg, x + bustW / 2, y + 85, y + garmentL - 60);
-      drawNotch(svg, x + bustW - 8, y + armDepth + 5);
-      drawNotch(svg, x + hipW - 5, y + garmentL - 80);
+      setInstructions([
+        "Cut front bodice: 1 on fold",
+        "Cut back bodice: 2 mirror pieces",
+        "Cut skirt panel: 2 mirror pieces or 1 on fold depending on fabric width",
+        butterfly ? "Cut butterfly sleeves: 2 outer and 2 lining" : sleeveless ? "Cut neckline and armhole facings" : "Cut sleeves: 2 mirror pieces"
+      ], [
+        "Join shoulder seams, then finish neckline facing or collar.",
+        "Sew darts or side shaping according to the fitted guide lines.",
+        "Attach skirt to bodice at waistline and match notches.",
+        butterfly ? "Construct butterfly sleeves with light interfacing before attaching." : "Attach sleeves or armhole facings, then close side seams.",
+        "Hem the skirt. Add zipper, buttons, or ties depending on style."
+      ]);
     }
 
-    function drawSleeve(svg, data) {
-      const { x, y, bust, armhole, sleeve, ease, seam } = data;
+    function drawTop(type, m) {
+      const t = type.toLowerCase();
+      const placket = /button|shirt|polo|barong|henley|chef|lab|mandarin/.test(t);
+      const collar = /polo|shirt|barong|blouse|chef|lab|mandarin|kebaya|kimona/.test(t);
+      const sleeveless = /tank|sleeveless|vest|sari/.test(t);
+      const w = clamp(px(m.quarterBust, 5.3), 180, 260);
+      const h = clamp(px(m.length, 3.2), 250, 390);
 
-      const capH = cmToPx(armhole * 0.55);
-      const sleeveL = cmToPx(Math.max(sleeve, 10));
-      const sleeveW = cmToPx((bust + ease) / 6);
-      const cuffW = sleeveW * 0.72;
-      const seamPx = cmToPx(seam);
+      makeShirtPanel(78, 110, w, h, "Front Panel", placket, collar);
+      makeShirtPanel(380, 110, w, h, "Back Panel", false, collar);
+      if (!sleeveless) {
+        makeSleeve(760, 125, 160, clamp(px(m.sleeve, 4.8), 130, 305), "Sleeve");
+      } else {
+        add("path", { d: "M 780 150 Q 850 105 920 150 L 900 190 Q 850 160 800 190 Z", class: "pattern-line soft" });
+        text(785, 145, "Armhole Binding");
+      }
 
-      const p = [
-        [x + sleeveW / 2, y],
-        [x + sleeveW, y + capH],
-        [x + cuffW, y + capH + sleeveL],
-        [x + sleeveW - cuffW, y + capH + sleeveL],
-        [x, y + capH],
-        [x + sleeveW / 2, y]
-      ];
+      if (collar) {
+        add("path", { d: "M 735 470 L 990 470 Q 1018 500 990 530 L 735 530 Q 707 500 735 470 Z", class: "pattern-line soft" });
+        add("path", { d: "M 735 470 L 990 470 Q 1018 500 990 530 L 735 530 Q 707 500 735 470 Z", class: "seam" });
+        text(755, 505, "Collar / Neckband");
+      }
 
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, seamPx), "seam-line");
-
-      addText(svg, x + 5, y - 16, "SLEEVE / ARM BLOCK", "svg-label", 14);
-      drawGrainline(svg, x + sleeveW / 2, y + 45, y + capH + sleeveL - 38);
-      drawNotch(svg, x + 12, y + capH);
-      drawNotch(svg, x + sleeveW - 12, y + capH);
+      setInstructions([
+        "Cut front panel: 1 pair or 1 on fold depending on opening",
+        "Cut back panel: 1 on fold",
+        sleeveless ? "Cut armhole binding/facing: 2" : "Cut sleeves: 2 mirror pieces",
+        collar ? "Cut collar or neckband: 2 plus interfacing if needed" : "Cut neckline binding"
+      ], [
+        "Sew shoulder seams and stabilize neckline.",
+        placket ? "Prepare button placket before closing side seams." : "Join side seams after shoulder seams.",
+        collar ? "Attach collar/neckband and press carefully." : "Finish neckline with binding.",
+        sleeveless ? "Attach armhole binding/facing." : "Set in sleeves, then close side and sleeve seams.",
+        "Finish hem and add buttons, snaps, or closures as required."
+      ]);
     }
 
-    function drawSkirt(svg, data) {
-      const { x, y, waist, hips, length, ease, seam, label } = data;
+    function drawBottoms(type, m) {
+      const t = type.toLowerCase();
+      const wide = /culottes|wide|cargo|lounge|pajama/.test(t);
+      const shorts = /shorts/.test(t);
+      const h = clamp(px(shorts ? m.inseam * 0.55 : m.inseam, 4.2), 220, 440);
+      const w = clamp(px(m.quarterHip, 4.2), 145, 220);
 
-      const waistW = cmToPx((waist + ease) / 4);
-      const hipW = cmToPx((hips + ease) / 4);
-      const skirtL = Math.min(cmToPx(length), 500);
-      const hemW = hipW * 1.08;
-      const seamPx = cmToPx(seam);
+      makePantsLeg(90, 120, w, h, "Front Leg", wide, shorts);
+      makePantsLeg(370, 120, w + 22, h, "Back Leg", wide, shorts);
 
-      const p = [
-        [x, y],
-        [x + waistW, y],
-        [x + hipW, y + cmToPx(22)],
-        [x + hemW, y + skirtL],
-        [x - 16, y + skirtL],
-        [x, y]
-      ];
+      add("rect", { x: 720, y: 130, width: 260, height: 60, rx: 14, class: "pattern-line soft" });
+      add("rect", { x: 720, y: 130, width: 260, height: 60, rx: 14, class: "seam" });
+      text(748, 166, "Waistband");
 
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, seamPx), "seam-line");
+      if (/cargo/.test(t)) {
+        add("rect", { x: 748, y: 250, width: 95, height: 110, rx: 12, class: "guide" });
+        add("rect", { x: 870, y: 250, width: 95, height: 110, rx: 12, class: "guide" });
+        text(760, 238, "Cargo Pockets", "small-label");
+      } else {
+        add("path", { d: "M 760 250 L 925 250 L 900 350 L 785 350 Z", class: "pattern-line soft" });
+        text(780, 306, "Pocket Bag");
+      }
 
-      addText(svg, x + 10, y - 16, label, "svg-label", 14);
-      addLine(svg, x - 4, y + cmToPx(22), x + hipW, y + cmToPx(22), "guide-line");
-      addText(svg, x + 10, y + cmToPx(22) - 8, "Hip line", "small-label", 11);
-      drawGrainline(svg, x + waistW / 2, y + 55, y + skirtL - 55);
-      drawNotch(svg, x + waistW * 0.45, y);
-      drawDart(svg, x + waistW * 0.55, y, 18, 85);
+      setInstructions([
+        "Cut front legs: 2 mirror pieces",
+        "Cut back legs: 2 mirror pieces",
+        "Cut waistband: 1 pair or 1 long strip",
+        /cargo/.test(t) ? "Cut cargo pockets and flaps: 2 pairs" : "Cut pocket bags: 2 pairs"
+      ], [
+        "Sew darts or pleats if included in your fit.",
+        "Join front and back crotch curves separately.",
+        "Sew inseams, then outer side seams.",
+        "Attach pockets before closing side seams if using cargo or side pockets.",
+        "Attach waistband, insert elastic or zipper, then hem."
+      ]);
     }
 
-    function drawPants(svg, data) {
-      const { x, y, waist, hips, height, length, ease, seam, label } = data;
+    function drawSkirtOnly(type, m) {
+      const t = type.toLowerCase();
+      const pencil = /pencil/.test(t);
+      const flared = /a-line|saya|tutu|school|circle/.test(t);
+      const topW = clamp(px(m.quarterWaist, 5.2), 130, 200);
+      const bottomW = pencil ? topW + 25 : flared ? topW + 250 : topW + 110;
+      const h = clamp(px(m.length * 0.55, 3.2), 250, 430);
 
-      const waistW = cmToPx((waist + ease) / 4);
-      const hipW = cmToPx((hips + ease) / 4);
-      const pantL = Math.min(cmToPx(length), cmToPx(height * 0.68), 520);
-      const crotchD = cmToPx(height * 0.16);
-      const kneeY = y + pantL * 0.58;
-      const hemW = hipW * 0.45;
-      const seamPx = cmToPx(seam);
+      makeSkirt(140, 120, topW, bottomW, h, "Front Skirt");
+      makeSkirt(560, 120, topW, bottomW, h, "Back Skirt");
+      add("rect", { x: 840, y: 110, width: 230, height: 58, rx: 14, class: "pattern-line soft" });
+      text(885, 146, "Waistband");
 
-      const p = [
-        [x, y],
-        [x + waistW, y],
-        [x + hipW + 28, y + crotchD],
-        [x + hemW + 44, y + pantL],
-        [x + 20, y + pantL],
-        [x + hipW * 0.28, kneeY],
-        [x - 8, y + crotchD],
-        [x, y]
-      ];
-
-      addPath(svg, p, "pattern-line");
-      addPath(svg, offsetPoints(p, seamPx), "seam-line");
-
-      addText(svg, x + 5, y - 16, label, "svg-label", 14);
-      addLine(svg, x - 8, y + crotchD, x + hipW + 28, y + crotchD, "guide-line");
-      addLine(svg, x + 6, kneeY, x + hipW, kneeY, "guide-line");
-      addText(svg, x + 8, y + crotchD - 8, "Crotch line", "small-label", 11);
-      addText(svg, x + 8, kneeY - 8, "Knee line", "small-label", 11);
-      drawGrainline(svg, x + waistW / 2, y + 65, y + pantL - 60);
-      drawDart(svg, x + waistW * 0.55, y, 15, 70);
-      drawNotch(svg, x + hipW + 16, y + crotchD);
+      setInstructions([
+        "Cut front skirt: 1 on fold",
+        "Cut back skirt: 2 mirror pieces",
+        "Cut waistband: 1 long strip",
+        pencil ? "Add back slit allowance" : "Mark hem sweep evenly"
+      ], [
+        "Sew darts or gathers at waist as needed.",
+        "Join side seams and press open.",
+        "Attach waistband and closure.",
+        pencil ? "Sew back slit before final hem." : "Let the skirt hang before leveling the hem.",
+        "Finish hem with narrow or blind stitch."
+      ]);
     }
 
-    function addPath(svg, points, className) {
-      const d = points
-        .map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${p[1]}`)
-        .join(" ") + " Z";
+    function drawJacket(type, m) {
+      const t = type.toLowerCase();
+      const coat = /coat|overcoat|raincoat|tailcoat|lab|graduation|choir/.test(t);
+      const w = clamp(px(m.quarterBust, 5.4), 190, 275);
+      const h = clamp(px(m.length, coat ? 3.8 : 3.3), 310, 510);
 
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", d);
-      path.setAttribute("class", className);
-      svg.appendChild(path);
+      makeJacketPanel(78, 100, w, h, "Front Jacket", coat);
+      makeJacketPanel(390, 100, w, h, "Back Jacket", coat);
+      makeSleeve(760, 120, 165, clamp(px(m.sleeve, 5), 210, 350), "Two-Piece Sleeve");
+      add("path", { d: "M 735 520 L 1000 520 L 966 600 L 770 600 Z", class: "pattern-line soft" });
+      text(775, 565, "Facing / Lapel");
+
+      setInstructions([
+        "Cut front jacket: 2 mirror pieces",
+        "Cut back jacket: 1 on fold or 2 pieces",
+        "Cut sleeves: 2 pairs if using two-piece sleeve",
+        "Cut facing and lining pieces",
+        "Cut pocket pieces if required"
+      ], [
+        "Interface front facing, collar, lapel, and hem areas.",
+        "Join shoulder and side seams of shell and lining.",
+        "Construct sleeves and set them into armholes.",
+        "Attach facing and lining, then bag out or hand-finish.",
+        "Add buttons, snaps, zipper, or closures."
+      ]);
     }
 
-    function addLine(svg, x1, y1, x2, y2, className) {
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", x1);
-      line.setAttribute("y1", y1);
-      line.setAttribute("x2", x2);
-      line.setAttribute("y2", y2);
-      line.setAttribute("class", className);
-      svg.appendChild(line);
+    function drawRobe(type, m) {
+      const w = clamp(px(m.quarterBust + 20, 4.8), 250, 380);
+      const h = clamp(px(m.length, 3.8), 360, 560);
+      const d = `M 180 105 L ${180 + w} 105 L ${180 + w + 60} ${105 + h} L ${180 + w / 2 + 20} ${105 + h} L ${180 + w / 2} 190 L ${180 + w / 2 - 20} ${105 + h} L 120 ${105 + h} Z`;
+      path(d);
+      path(d, "seam");
+      line(180 + w / 2, 180, 180 + w / 2, 105 + h - 30, "grain");
+      text(190, 142, "Robe / Cape Body");
+      makeSleeve(760, 130, 185, 260, "Wide Sleeve");
+      add("rect", { x: 750, y: 455, width: 280, height: 44, rx: 13, class: "pattern-line soft" });
+      text(790, 483, "Tie Belt / Binding");
+
+      setInstructions([
+        "Cut body: 2 mirror pieces or 1 back on fold",
+        "Cut wide sleeves: 2 mirror pieces if applicable",
+        "Cut belt or edge binding",
+        "Cut hood or collar if needed"
+      ], [
+        "Finish neckline or front opening with binding.",
+        "Attach sleeves if the robe has sleeves.",
+        "Sew side seams and sleeve seams together.",
+        "Hem the lower edge evenly.",
+        "Add belt loops, tie belt, or closure."
+      ]);
     }
 
-    function addCurve(svg, x1, y1, cx, cy, x2, y2, className) {
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
-      path.setAttribute("class", className);
-      path.setAttribute("fill", "none");
-      svg.appendChild(path);
+    function drawAccessory(type, m) {
+      const t = type.toLowerCase();
+      if (/bow/.test(t)) {
+        add("path", { d: "M 185 250 C 260 180, 360 190, 440 250 C 360 310, 260 320, 185 250 Z", class: "pattern-line soft" });
+        add("path", { d: "M 565 250 C 640 180, 740 190, 820 250 C 740 310, 640 320, 565 250 Z", class: "pattern-line soft" });
+        add("rect", { x: 455, y: 220, width: 90, height: 62, rx: 14, class: "pattern-line" });
+      } else if (/tie/.test(t)) {
+        add("path", { d: "M 500 70 L 570 170 L 545 640 L 500 700 L 455 640 L 430 170 Z", class: "pattern-line soft" });
+      } else {
+        add("rect", { x: 260, y: 180, width: 610, height: 170, rx: 18, class: "pattern-line soft" });
+        add("rect", { x: 260, y: 180, width: 610, height: 170, rx: 18, class: "seam" });
+      }
+      text(310, 135, `${type} Pattern`);
+      setInstructions([
+        "Cut main accessory piece as marked",
+        "Cut interfacing for structure if needed",
+        "Cut lining or backing if required"
+      ], [
+        "Fuse interfacing to the wrong side of fabric.",
+        "Sew with a small seam allowance for clean edges.",
+        "Turn right side out and press.",
+        "Topstitch or hand-finish opening."
+      ]);
     }
 
-    function addText(svg, x, y, text, className, size) {
-      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.setAttribute("x", x);
-      t.setAttribute("y", y);
-      t.setAttribute("class", className);
-      t.setAttribute("font-size", size);
-      t.textContent = text;
-      svg.appendChild(t);
+    function drawBabyOnesie(type, m) {
+      const gown = /gown|dress|christening|dedication|nightgown|formal/.test(type.toLowerCase());
+      makeBabyBody(120, 100, 210, gown ? 360 : 315, "Front Baby Body", gown);
+      makeBabyBody(420, 100, 210, gown ? 360 : 315, "Back Baby Body", gown);
+      makeSleeve(760, 130, 135, 150, "Baby Sleeve");
+      add("path", { d: "M 745 360 Q 835 315 925 360 L 900 410 Q 835 380 770 410 Z", class: "pattern-line soft" });
+      text(765, 354, "Neck Binding");
+      setInstructions([
+        "Cut front body: 1 on fold",
+        "Cut back body: 1 on fold or 2 pieces if opening is needed",
+        "Cut sleeves: 2 mirror pieces",
+        "Cut neck and leg bindings",
+        gown ? "Add hem allowance for easy diaper-change gown" : "Mark snap closure placement at crotch"
+      ], [
+        "Use soft fabric and avoid rough inner seams.",
+        "Attach shoulder opening or snap placket first.",
+        "Set sleeves before sewing side seams.",
+        "Attach bindings with gentle stretch.",
+        "Install baby-safe snaps and check all edges."
+      ]);
     }
 
-    function drawGrainline(svg, x, y1, y2) {
-      addLine(svg, x, y1, x, y2, "guide-line");
-      addText(svg, x + 8, y1 + 22, "GRAINLINE", "small-label", 11);
-
-      const arrowTop = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      arrowTop.setAttribute("d", `M ${x} ${y1} L ${x - 6} ${y1 + 12} L ${x + 6} ${y1 + 12} Z`);
-      arrowTop.setAttribute("fill", "#7c6d68");
-      svg.appendChild(arrowTop);
-
-      const arrowBottom = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      arrowBottom.setAttribute("d", `M ${x} ${y2} L ${x - 6} ${y2 - 12} L ${x + 6} ${y2 - 12} Z`);
-      arrowBottom.setAttribute("fill", "#7c6d68");
-      svg.appendChild(arrowBottom);
+    function drawBabyTop(type, m) {
+      makeShirtPanel(140, 120, 185, 230, "Baby Front", /kimono|barong|shirt|jacket/.test(type.toLowerCase()), true);
+      makeShirtPanel(430, 120, 185, 230, "Baby Back", false, true);
+      makeSleeve(760, 130, 130, 140, "Baby Sleeve");
+      setInstructions([
+        "Cut baby front: 2 mirror pieces or 1 on fold",
+        "Cut baby back: 1 on fold",
+        "Cut sleeves: 2",
+        "Cut soft neckline binding"
+      ], [
+        "Use flat seams or soft seam finishing.",
+        "Attach neckline binding first.",
+        "Set sleeves, then close side seams.",
+        "Add soft ties, snaps, or buttons.",
+        "Press lightly using low heat."
+      ]);
     }
 
-    function drawNotch(svg, x, y) {
-      const n = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      n.setAttribute("d", `M ${x} ${y} L ${x + 10} ${y + 7} L ${x} ${y + 14} Z`);
-      n.setAttribute("class", "notch");
-      svg.appendChild(n);
+    function drawBabyBottom(type, m) {
+      makePantsLeg(180, 140, 130, 240, "Baby Front Leg", /bloomer|diaper/.test(type.toLowerCase()), /shorts|bloomer|diaper/.test(type.toLowerCase()));
+      makePantsLeg(450, 140, 140, 240, "Baby Back Leg", /bloomer|diaper/.test(type.toLowerCase()), /shorts|bloomer|diaper/.test(type.toLowerCase()));
+      add("rect", { x: 760, y: 160, width: 200, height: 48, rx: 13, class: "pattern-line soft" });
+      text(802, 190, "Soft Waistband");
+      setInstructions([
+        "Cut front legs: 2 mirror pieces",
+        "Cut back legs: 2 mirror pieces",
+        "Cut soft waistband",
+        "Cut ankle cuffs if needed"
+      ], [
+        "Sew crotch curves with soft finishing.",
+        "Join inseams and side seams.",
+        "Attach waistband with gentle elastic.",
+        "Hem or attach cuffs.",
+        "Check that leg openings are comfortable."
+      ]);
     }
 
-    function drawDart(svg, x, y, width, depth) {
-      addLine(svg, x, y, x - width / 2, y + depth, "guide-line");
-      addLine(svg, x, y, x + width / 2, y + depth, "guide-line");
-      addText(svg, x + width, y + depth / 2, "Dart", "small-label", 11);
+    function drawBabyAccessory(type, m, kind) {
+      makeAccessory(260, 180, 320, 230, type, kind);
+      setInstructions([
+        "Cut 2 main fabric pieces",
+        "Cut 1 soft lining if needed",
+        "Add elastic casing only where safe"
+      ], [
+        "Use soft breathable fabric.",
+        "Sew around the edge with small stitches.",
+        "Turn and press gently.",
+        "Topstitch edge for durability.",
+        "Avoid loose small parts for baby safety."
+      ]);
     }
 
-    function offsetPoints(points, amount) {
-      const cx = points.reduce((sum, p) => sum + p[0], 0) / points.length;
-      const cy = points.reduce((sum, p) => sum + p[1], 0) / points.length;
-
-      return points.map(([x, y]) => {
-        const dx = x - cx;
-        const dy = y - cy;
-        const len = Math.sqrt(dx * dx + dy * dy) || 1;
-        return [
-          x + (dx / len) * amount,
-          y + (dy / len) * amount
-        ];
-      });
+    function drawRectanglePattern(type, m) {
+      const w = /blanket|swaddle|receiving/.test(type.toLowerCase()) ? 620 : 420;
+      const h = /blanket|swaddle|receiving/.test(type.toLowerCase()) ? 420 : 250;
+      add("rect", { x: 250, y: 150, width: w, height: h, rx: 18, class: "pattern-line soft" });
+      add("rect", { x: 242, y: 142, width: w + 16, height: h + 16, rx: 22, class: "seam" });
+      line(250 + w / 2, 185, 250 + w / 2, 150 + h - 30, "grain");
+      text(280, 190, type);
+      text(280, 150 + h + 34, "Rectangle pattern with hem allowance", "measure");
+      setInstructions([
+        "Cut 1 main fabric rectangle",
+        "Cut 1 lining or backing if desired",
+        "Add rounded corners if for baby use"
+      ], [
+        "Place right sides together if lined.",
+        "Sew around edges, leaving a turning gap.",
+        "Turn, press, and topstitch.",
+        "Use soft fabric for newborn items."
+      ]);
     }
 
-    function printPattern() {
-      window.print();
+    function addTitleBlock(group, type, m) {
+      add("rect", { x: 34, y: 685, width: 1132, height: 48, rx: 14, class: "guide" });
+      text(55, 715, `Pattern: ${type} | Group: ${group} | Size: ${inputs.size.value} | Unit: ${m.unit} | Ease: ${m.ease}${m.unit}`, "small-label");
     }
 
-    function downloadSVG() {
-      const svg = document.getElementById("patternSvg");
+    function setInstructions(cuts, sews) {
+      cutList.innerHTML = cuts.map(item => `<li>${item}</li>`).join("");
+      sewList.innerHTML = sews.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function downloadPNG() {
       const serializer = new XMLSerializer();
       const source = serializer.serializeToString(svg);
-      const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
-      downloadBlob(blob, "sewtruly-pattern.svg");
+      const svgBlob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1600;
+        canvas.height = 1014;
+        const ctx = canvas.getContext("2d");
+        const bg = getComputedStyle(document.documentElement).getPropertyValue("--paper") || "#fffdf9";
+        ctx.fillStyle = bg.trim();
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+
+        const a = document.createElement("a");
+        a.download = `${typeSelect.value.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-pattern.png`;
+        a.href = canvas.toDataURL("image/png");
+        a.click();
+      };
+
+      img.src = url;
     }
 
-    function downloadDXF() {
-      const garmentInfo = getCurrentGarmentInfo();
-      const bust = value("bust");
-      const waist = value("waist");
-      const hips = value("hips");
-      const height = value("height");
-
-      const dxf = `0
-SECTION
-2
-HEADER
-9
-$ACADVER
-1
-AC1009
-0
-ENDSEC
-0
-SECTION
-2
-ENTITIES
-0
-TEXT
-8
-LABELS
-10
-20
-20
-20
-40
-12
-1
-SewTruly ${garmentInfo.label.toUpperCase()} Pattern - Bust/Chest ${bust} Waist ${waist} Hips/Seat ${hips} Height ${height}
-0
-LINE
-8
-PATTERN
-10
-50
-20
-80
-11
-300
-21
-80
-0
-LINE
-8
-PATTERN
-10
-300
-20
-80
-11
-360
-21
-420
-0
-LINE
-8
-PATTERN
-10
-360
-20
-420
-11
-70
-21
-420
-0
-LINE
-8
-PATTERN
-10
-70
-20
-420
-11
-50
-21
-80
-0
-LINE
-8
-GRAINLINE
-10
-190
-20
-120
-11
-190
-21
-390
-0
-ENDSEC
-0
-EOF`;
-
-      const blob = new Blob([dxf], { type: "application/dxf" });
-      downloadBlob(blob, "sewtruly-basic-pattern.dxf");
-    }
-
-    function downloadBlob(blob, filename) {
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function toggleGrid() {
-      const stage = document.getElementById("patternStage");
-      gridVisible = !gridVisible;
-      stage.style.backgroundImage = gridVisible
-        ? "linear-gradient(#f8e8e1 1px, transparent 1px), linear-gradient(90deg, #f8e8e1 1px, transparent 1px)"
-        : "none";
-    }
-
-    function resetForm() {
-      document.getElementById("wearerCategory").value = "women";
-      buildGroupOptions();
-      document.getElementById("garmentGroup").value = "everyday";
-      buildGarmentOptions();
-      document.getElementById("garment").value = "casual_dress";
-      document.getElementById("bust").value = 88;
-      document.getElementById("waist").value = 70;
-      document.getElementById("hips").value = 96;
-      document.getElementById("height").value = 162;
-      document.getElementById("shoulder").value = 38;
-      document.getElementById("armhole").value = 20;
-      document.getElementById("length").value = 95;
-      document.getElementById("sleeve").value = 24;
-      document.getElementById("neckline").value = "round";
-      document.getElementById("fit").value = "regular";
-      document.getElementById("seam").value = "1.5";
-      document.getElementById("paper").value = "a4";
-      generatePattern();
-    }
+    init();
   </script>
 </body>
 </html>
