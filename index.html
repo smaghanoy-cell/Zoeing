@@ -1038,12 +1038,32 @@
       };
     }
 
-    function getPatternBlock(garmentKey) {
+    function getPatternBlock(garmentKey, category, group) {
       const key = garmentKey.toLowerCase();
-      for (const block in blockMap) {
-        if (blockMap[block].some(word => key.includes(word))) return block;
+
+      if (category === "newborn") {
+        if (["swaddle", "receiving_blanket", "baby_blanket", "crib_sheet", "changing_mat_cover"].some(word => key.includes(word))) return "rectangle";
+        if (["bonnet", "cap", "headband", "mittens", "booties", "bib", "burp", "scarf", "pacifier"].some(word => key.includes(word))) return "accessory";
+        return "baby";
       }
-      return "dress";
+
+      if (category === "men") {
+        if (["pants", "trousers", "slacks", "shorts", "jeans", "chinos", "jogger", "coveralls"].some(word => key.includes(word))) return "mensPants";
+        if (["suit", "tuxedo", "blazer", "jacket", "coat", "barong", "shirt", "polo", "kurta", "robe", "dashiki", "tunic"].some(word => key.includes(word))) return "mensTop";
+        if (["tie", "bowtie", "cummerbund"].some(word => key.includes(word))) return "accessory";
+        return "mensTop";
+      }
+
+      if (category === "children") {
+        if (["pants", "shorts", "jogger", "leggings", "overalls"].some(word => key.includes(word))) return "childPants";
+        if (["shirt", "polo", "blazer", "vest", "apron", "robe", "cape", "hoodie", "cardigan"].some(word => key.includes(word))) return "childTop";
+        return "childDress";
+      }
+
+      if (["skirt", "culottes", "saya"].some(word => key.includes(word))) return "skirt";
+      if (["pants", "trousers", "culottes", "slacks", "maternity_pants"].some(word => key.includes(word))) return "pants";
+      if (["blouse", "shirt", "barong", "top", "blazer", "jacket", "coat", "kimona", "sari", "apron", "cape", "cloak", "scrub", "chef"].some(word => key.includes(word))) return "top";
+      return "womenDress";
     }
 
     function setSuggestedMeasurements() {
@@ -1061,8 +1081,9 @@
 
     function generatePattern() {
       const garmentInfo = getCurrentGarmentInfo();
-      const patternBlock = getPatternBlock(garmentInfo.key);
       const category = value("wearerCategory");
+      const group = value("garmentGroup");
+      const patternBlock = getPatternBlock(garmentInfo.key, category, group);
       const bust = value("bust");
       const waist = value("waist");
       const hips = value("hips");
@@ -1087,62 +1108,290 @@
       const svg = document.getElementById("patternSvg");
       svg.innerHTML = "";
 
+      const data = { garmentInfo, category, group, patternBlock, bust, waist, hips, height, shoulder, armhole, length, sleeve, neckline, fit, seam, paper, ease };
       drawTitle(svg, garmentInfo, bust, waist, hips, height, fit, seam, paper);
+      drawCategoryPattern(svg, data);
+    }
 
-      if (patternBlock === "dress" || patternBlock === "top") {
+    function drawCategoryPattern(svg, data) {
+      const label = `${data.garmentInfo.label.toUpperCase()} PATTERN`;
+
+      if (data.patternBlock === "womenDress") {
+        drawWomenDressPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "top") {
         drawBodice(svg, {
-          x: 80,
-          y: 100,
-          bust,
-          waist,
-          hips,
-          shoulder,
-          armhole,
-          length: patternBlock === "top" ? Math.min(length, 76) : length,
-          sleeve,
-          neckline,
-          ease,
-          seam,
-          label: `${garmentInfo.label.toUpperCase()} BLOCK`
+          x: 80, y: 105,
+          bust: data.bust, waist: data.waist, hips: data.hips,
+          shoulder: data.shoulder, armhole: data.armhole,
+          length: Math.min(data.length, 72), sleeve: data.sleeve,
+          neckline: data.neckline, ease: data.ease, seam: data.seam,
+          label
         });
-
-        drawSleeve(svg, {
-          x: 560,
-          y: 110,
-          bust,
-          armhole,
-          sleeve,
-          ease,
-          seam
-        });
+        drawSleeve(svg, { x: 570, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease, seam: data.seam });
+        return;
       }
 
-      if (patternBlock === "skirt") {
-        drawSkirt(svg, {
-          x: 190,
-          y: 120,
-          waist,
-          hips,
-          length,
-          ease,
-          seam,
-          label: `${garmentInfo.label.toUpperCase()} BLOCK`
-        });
+      if (data.patternBlock === "skirt") {
+        drawSkirt(svg, { x: 190, y: 120, waist: data.waist, hips: data.hips, length: data.length, ease: data.ease, seam: data.seam, label });
+        return;
       }
 
-      if (patternBlock === "pants") {
-        drawPants(svg, {
-          x: 160,
-          y: 100,
-          waist,
-          hips,
-          height,
-          length,
-          ease,
-          seam,
-          label: `${garmentInfo.label.toUpperCase()} BLOCK`
-        });
+      if (data.patternBlock === "pants") {
+        drawPants(svg, { x: 160, y: 100, waist: data.waist, hips: data.hips, height: data.height, length: data.length, ease: data.ease, seam: data.seam, label });
+        return;
       }
+
+      if (data.patternBlock === "mensTop") {
+        drawMensTopPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "mensPants") {
+        drawMensPantsPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "childDress") {
+        drawChildDressPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "childTop") {
+        drawChildTopPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "childPants") {
+        drawChildPantsPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "baby") {
+        drawBabyPattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "rectangle") {
+        drawRectanglePattern(svg, { ...data, label });
+        return;
+      }
+
+      if (data.patternBlock === "accessory") {
+        drawAccessoryPattern(svg, { ...data, label });
+      }
+    }
+
+    function drawWomenDressPattern(svg, data) {
+      const x = 65;
+      const y = 105;
+      const bodiceL = Math.min(cmToPx(data.height * 0.24), 165);
+      const skirtL = Math.min(cmToPx(data.length) - bodiceL, 320);
+      const bustW = cmToPx((data.bust + data.ease) / 4);
+      const waistW = cmToPx((data.waist + data.ease) / 4);
+      const hemW = Math.max(cmToPx((data.hips + data.ease) / 3), waistW + 120);
+      const seamPx = cmToPx(data.seam);
+
+      const bodice = [
+        [x + 35, y],
+        [x + cmToPx(data.shoulder / 2), y + 18],
+        [x + bustW, y + cmToPx(data.armhole)],
+        [x + waistW, y + bodiceL],
+        [x + 18, y + bodiceL],
+        [x + 5, y + cmToPx(data.armhole)],
+        [x, y + 42],
+        [x + 35, y]
+      ];
+
+      const skirt = [
+        [x + 18, y + bodiceL],
+        [x + waistW, y + bodiceL],
+        [x + hemW, y + bodiceL + skirtL],
+        [x - 45, y + bodiceL + skirtL],
+        [x + 18, y + bodiceL]
+      ];
+
+      addPath(svg, bodice, "pattern-line");
+      addPath(svg, offsetPoints(bodice, seamPx), "seam-line");
+      addPath(svg, skirt, "pattern-line");
+      addPath(svg, offsetPoints(skirt, seamPx), "seam-line");
+
+      addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
+      addLine(svg, x + 20, y + bodiceL, x + waistW + 6, y + bodiceL, "guide-line");
+      addText(svg, x + 24, y + bodiceL - 8, "Waist seam", "small-label", 11);
+      drawDart(svg, x + waistW * 0.55, y + 42, 18, bodiceL - 52);
+      drawGrainline(svg, x + waistW / 2, y + 80, y + bodiceL + skirtL - 50);
+      drawNotch(svg, x + bustW - 8, y + cmToPx(data.armhole));
+
+      drawSleeve(svg, { x: 590, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease, seam: data.seam });
+      addText(svg, 590, 430, "Separate sleeve included", "small-label", 12);
+    }
+
+    function drawMensTopPattern(svg, data) {
+      const x = 65;
+      const y = 105;
+      const bodyL = Math.min(cmToPx(data.length), 340);
+      const chestW = cmToPx((data.bust + data.ease + 6) / 4);
+      const waistW = cmToPx((data.waist + data.ease + 4) / 4);
+      const hipW = cmToPx((data.hips + data.ease + 4) / 4);
+      const shoulderW = cmToPx(data.shoulder / 2);
+      const armDepth = cmToPx(data.armhole);
+      const seamPx = cmToPx(data.seam);
+
+      const body = [
+        [x + 32, y],
+        [x + shoulderW + 16, y + 18],
+        [x + chestW + 20, y + armDepth],
+        [x + hipW + 10, y + bodyL],
+        [x - 8, y + bodyL],
+        [x + 2, y + armDepth],
+        [x, y + 40],
+        [x + 32, y]
+      ];
+
+      addPath(svg, body, "pattern-line");
+      addPath(svg, offsetPoints(body, seamPx), "seam-line");
+      addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
+      addLine(svg, x + chestW / 2, y + 12, x + chestW / 2, y + bodyL - 25, "guide-line");
+      addText(svg, x + chestW / 2 + 8, y + 80, "Center front / button placket", "small-label", 11);
+      addLine(svg, x + 25, y + armDepth + 30, x + chestW + 5, y + armDepth + 30, "guide-line");
+      addText(svg, x + 30, y + armDepth + 22, "Chest line", "small-label", 11);
+      drawNotch(svg, x + chestW + 16, y + armDepth);
+
+      drawSleeve(svg, { x: 570, y: 120, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease + 6, seam: data.seam });
+      drawCollarPiece(svg, 590, 460, data);
+    }
+
+    function drawMensPantsPattern(svg, data) {
+      drawPants(svg, { x: 120, y: 105, waist: data.waist, hips: data.hips, height: data.height, length: data.length, ease: data.ease + 4, seam: data.seam, label: data.label });
+      drawPants(svg, { x: 500, y: 105, waist: data.waist + 4, hips: data.hips + 6, height: data.height, length: data.length, ease: data.ease + 6, seam: data.seam, label: "BACK PANTS BLOCK" });
+    }
+
+    function drawChildDressPattern(svg, data) {
+      const scaled = { ...data, ease: data.ease + 2, length: Math.min(data.length, 75) };
+      drawWomenDressPattern(svg, scaled);
+      addText(svg, 60, 640, "Child pattern uses softer ease, shorter lengths, and simpler assembly lines.", "small-label", 12);
+    }
+
+    function drawChildTopPattern(svg, data) {
+      drawBodice(svg, {
+        x: 90, y: 115,
+        bust: data.bust, waist: data.waist, hips: data.hips,
+        shoulder: data.shoulder, armhole: data.armhole,
+        length: Math.min(data.length, 55), sleeve: data.sleeve,
+        neckline: data.neckline, ease: data.ease + 3, seam: data.seam,
+        label: data.label
+      });
+      drawSleeve(svg, { x: 560, y: 130, bust: data.bust, armhole: data.armhole, sleeve: data.sleeve, ease: data.ease + 3, seam: data.seam });
+    }
+
+    function drawChildPantsPattern(svg, data) {
+      drawPants(svg, { x: 170, y: 110, waist: data.waist, hips: data.hips, height: data.height, length: Math.min(data.length, 75), ease: data.ease + 3, seam: data.seam, label: data.label });
+      addText(svg, 165, 625, "Elastic waistband allowance recommended for children’s wear.", "small-label", 12);
+    }
+
+    function drawBabyPattern(svg, data) {
+      const x = 120;
+      const y = 115;
+      const bodyW = cmToPx((data.bust + data.ease) / 2.4);
+      const bodyL = Math.min(cmToPx(data.length), 250);
+      const sleeveW = cmToPx(Math.max(data.sleeve, 8));
+      const legW = bodyW * 0.32;
+      const seamPx = cmToPx(data.seam);
+
+      const p = [
+        [x + bodyW * 0.38, y],
+        [x + bodyW * 0.62, y],
+        [x + bodyW * 0.82, y + 35],
+        [x + bodyW + sleeveW, y + 70],
+        [x + bodyW * 0.84, y + 110],
+        [x + bodyW * 0.72, y + bodyL],
+        [x + bodyW * 0.55, y + bodyL],
+        [x + bodyW * 0.50, y + bodyL - 45],
+        [x + bodyW * 0.45, y + bodyL],
+        [x + bodyW * 0.28, y + bodyL],
+        [x + bodyW * 0.16, y + 110],
+        [x - sleeveW, y + 70],
+        [x + bodyW * 0.18, y + 35],
+        [x + bodyW * 0.38, y]
+      ];
+
+      addPath(svg, p, "pattern-line");
+      addPath(svg, offsetPoints(p, seamPx), "seam-line");
+      addText(svg, x + 20, y - 16, data.label, "svg-label", 14);
+      addCurve(svg, x + bodyW * 0.38, y, x + bodyW * 0.5, y + 32, x + bodyW * 0.62, y, "guide-line");
+      addLine(svg, x + bodyW / 2, y + 45, x + bodyW / 2, y + bodyL - 30, "guide-line");
+      addText(svg, x + bodyW / 2 + 8, y + 75, "Snap opening / fold line", "small-label", 11);
+      drawNotch(svg, x + bodyW * 0.84, y + 110);
+      drawNotch(svg, x + bodyW * 0.16, y + 110);
+
+      drawCollarPiece(svg, 565, 140, data, "NECK BINDING");
+      drawRectanglePiece(svg, 560, 250, 210, 70, "CUFF / LEG BINDING");
+    }
+
+    function drawRectanglePattern(svg, data) {
+      const x = 150;
+      const y = 140;
+      const w = Math.min(cmToPx(data.bust + data.ease), 460);
+      const h = Math.min(cmToPx(data.length), 360);
+      drawRectanglePiece(svg, x, y, w, h, data.label);
+      addText(svg, x + 18, y + h + 35, "Rectangular pattern: add fold, hem allowance, and corner finishing.", "small-label", 12);
+    }
+
+    function drawAccessoryPattern(svg, data) {
+      const x = 120;
+      const y = 150;
+      const key = data.garmentInfo.key.toLowerCase();
+
+      if (key.includes("bib")) {
+        const p = [[x + 90, y], [x + 180, y + 50], [x + 160, y + 210], [x + 25, y + 210], [x, y + 50], [x + 90, y]];
+        addPath(svg, p, "pattern-line");
+        addPath(svg, offsetPoints(p, cmToPx(data.seam)), "seam-line");
+        addCurve(svg, x + 60, y + 25, x + 90, y + 85, x + 120, y + 25, "guide-line");
+        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
+        return;
+      }
+
+      if (key.includes("bonnet") || key.includes("cap")) {
+        addCurve(svg, x, y + 150, x + 120, y - 70, x + 240, y + 150, "pattern-line");
+        addLine(svg, x, y + 150, x + 240, y + 150, "pattern-line");
+        drawRectanglePiece(svg, x + 300, y + 60, 230, 50, "BONNET BAND");
+        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
+        return;
+      }
+
+      if (key.includes("mittens")) {
+        const mitten = [[x + 35, y], [x + 95, y + 10], [x + 125, y + 80], [x + 105, y + 160], [x + 25, y + 160], [x, y + 80], [x + 35, y]];
+        addPath(svg, mitten, "pattern-line");
+        addPath(svg, offsetPoints(mitten, cmToPx(data.seam)), "seam-line");
+        drawRectanglePiece(svg, x + 220, y + 100, 120, 42, "ELASTIC CUFF");
+        addText(svg, x + 10, y - 16, data.label, "svg-label", 14);
+        return;
+      }
+
+      drawRectanglePiece(svg, x, y, 360, 110, data.label);
+      drawRectanglePiece(svg, x, y + 170, 260, 70, "SECONDARY STRAP / BAND");
+      addText(svg, x + 10, y + 290, "Accessory pattern uses simplified rectangles or curved pieces depending on item.", "small-label", 12);
+    }
+
+    function drawCollarPiece(svg, x, y, data, label = "COLLAR / NECK BAND") {
+      const w = Math.min(cmToPx(data.bust / 3), 210);
+      const h = 45;
+      const p = [[x, y + h], [x + 15, y], [x + w - 15, y], [x + w, y + h], [x, y + h]];
+      addPath(svg, p, "pattern-line");
+      addPath(svg, offsetPoints(p, cmToPx(data.seam)), "seam-line");
+      addText(svg, x + 8, y - 12, label, "svg-label", 13);
+      addText(svg, x + 14, y + h + 24, "Cut 2 or cut on fold", "small-label", 11);
+    }
+
+    function drawRectanglePiece(svg, x, y, w, h, label) {
+      const p = [[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y]];
+      addPath(svg, p, "pattern-line");
+      addPath(svg, offsetPoints(p, 8), "seam-line");
+      addText(svg, x + 12, y - 14, label, "svg-label", 13);
+      drawGrainline(svg, x + w / 2, y + 20, y + h - 20);
     }
 
     function drawTitle(svg, garmentInfo, bust, waist, hips, height, fit, seam, paper) {
